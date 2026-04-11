@@ -1,0 +1,20 @@
+
+wcvp_names.csv → taxa 表（分类层级数据）
+层级	wcvp_names 字段	填充规则
+科 (family)	family	只插入 taxon_rank='family' 且唯一
+属 (genus)	genus + family	从 genus 字段提取，关联到父级科
+种 (species)	完整学名	从 plants 表关联，不需要单独插入
+
+
+wcvp_distributions.csv → plant_distributions 表
+wcvp_distributions 字段	plant_distributions 字段	映射说明
+plant_name_id	wcvp_plant_name_id	关联标识
+continent_code_l1	area_code_l1	一级区域代码
+continent	continent	洲名
+region_code_l2	area_code_l2	二级区域代码
+region	area_name（暂存）	区域名
+area_code_l3	area_code_l3	三级区域代码
+area	area_name	区域名称
+introduced	introduced	是否引入
+extinct	extinct	是否灭绝
+location_doubtful	occurrence_status（映射为'doubtful'）	存疑标记

@@ -1,0 +1,12 @@
+{
+  "watch": ["src", "models", "controllers", "services", "routes"],
+  "ext": "js",
+  "ignore": ["node_modules", "*.json"],
+  "delay": 500,
+  "exec": "node",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "verbose": false,
+  "legacy-watch": false
+}

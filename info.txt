@@ -1,0 +1,139 @@
+// services/taxonomyService.js
+const db = require('../config/database');
+
+class TaxonomyService {
+    
+    /**
+     * 递归获取某个分类下的所有物种数量（含所有子分类）
+     * 使用 WITH RECURSIVE 实现
+     */
+    async getSpeciesCountRecursive(taxonId) {
+        // MySQL 8.0+ 支持 WITH RECURSIVE
+        const query = `
+            WITH RECURSIVE taxonomy_tree AS (
+                -- 初始查询：从当前节点开始
+                SELECT id, taxon_rank, parent_id
+                FROM taxa
+                WHERE id = ?
+                
+                UNION ALL
+                
+                -- 递归查询：获取所有子节点
+                SELECT t.id, t.taxon_rank, t.parent_id
+                FROM taxa t
+                INNER JOIN taxonomy_tree tt ON t.parent_id = tt.id
+            )
+            -- 统计所有物种级别的节点数量
+            SELECT COUNT(DISTINCT p.id) as species_count
+            FROM taxonomy_tree tt
+            LEFT JOIN plants p ON p.taxon_id = tt.id
+            WHERE tt.taxon_rank = 'species' OR p.id IS NOT NULL
+        `;
+        
+        const [rows] = await db.query(query, [taxonId]);
+        return rows[0].species_count;
+    }
+    
+    /**
+     * 获取直接子分类数量
+     */
+    async getChildTaxaCount(taxonId) {
+        const [rows] = await db.query(
+            'SELECT COUNT(*) as count FROM taxa WHERE parent_id = ?',
+            [taxonId]
+        );
+        return rows[0].count;
+    }
+    
+    /**
+     * 计算占已知植物的比例
+     */
+    async getKnownRatio(taxonId) {
+        // 先获取该分类下的物种数
+        const speciesCount = await this.getSpeciesCountRecursive(taxonId);
+        
+        // 获取全球已知植物总数（可以从配置表或统计表获取）
+        const [total] = await db.query(
+            'SELECT value FROM system_config WHERE key = "total_known_plants"'
+        );
+        const totalPlants = total ? total.value : 391000; // 默认约39.1万种
+        
+        const ratio = speciesCount / totalPlants;
+        
+        return {
+            count: speciesCount,
+            ratio: ratio,
+            percentage: (ratio * 100).toFixed(2) + '%'
+        };
+    }
+    
+    /**
+     * 获取节点的完整统计数据（用于前端展示）
+     */
+    async getTaxonStatistics(taxonId) {
+        // 并行查询各项数据
+        const [speciesStats, childCount, taxonInfo] = await Promise.all([
+            this.getSpeciesCountRecursive(taxonId),
+            this.getChildTaxaCount(taxonId),
+            db.query('SELECT * FROM taxa WHERE id = ?', [taxonId])
+        ]);
+        
+        const taxon = taxonInfo[0];
+        
+        // 计算占已知植物的比例
+        const totalPlants = 391000; // 可改为从配置读取
+        const ratio = speciesStats / totalPlants;
+        
+        // 获取子分类列表（用于展示具体有哪些目/科）
+        const [children] = await db.query(
+            'SELECT id, taxon_rank, scientific_name, chinese_name FROM taxa WHERE parent_id = ?',
+            [taxonId]
+        );
+        
+        return {
+            taxonId: taxon.id,
+            name: taxon.chinese_name || taxon.scientific_name,
+            scientificName: taxon.scientific_name,
+            rank: taxon.taxon_rank,
+            description: taxon.description,
+            keyFeatures: taxon.key_features,
+            statistics: {
+                totalSpecies: speciesStats,
+                childTaxaCount: childCount,
+                childTaxaList: children.map(c => ({
+                    id: c.id,
+                    name: c.chinese_name || c.scientific_name,
+                    rank: c.taxon_rank,
+                    count: null // 可以继续递归获取
+                })),
+                knownRatio: {
+                    value: ratio,
+                    percentage: (ratio * 100).toFixed(2) + '%',
+                    formatted: `${(ratio * 100).toFixed(1)}% 的已知植物`
+                },
+                globalSignificance: this.getGlobalSignificance(ratio, taxon.taxon_rank)
+            }
+        };
+    }
+    
+    /**
+     * 根据占比和等级，生成全球重要性描述
+     */
+    getGlobalSignificance(ratio, rank) {
+        if (rank === 'family') {
+            if (ratio > 0.1) return '大型科，物种丰富';
+            if (ratio > 0.01) return '中型科，具有一定代表性';
+            return '小型科，物种较少';
+        }
+        if (rank === 'genus') {
+            if (ratio > 0.01) return '物种丰富的属';
+            return '物种稀少的属';
+        }
+        if (rank === 'species') {
+            return '单一物种';
+        }
+        return '';
+    }
+}
+
+module.exports = new TaxonomyService();

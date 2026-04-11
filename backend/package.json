@@ -1,0 +1,53 @@
+{
+  "name": "plant-knowledge-backend",
+  "version": "1.0.0",
+  "description": "植物科普学习与知识可视化系统后端",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "node --require ./tests/setup.js --test",
+    "db:ensure-indexes": "node scripts/ensure-performance-indexes.js",
+    "migrate:redlist-alert-user-state": "node scripts/migrate-redlist-alert-user-state.js",
+    "migrate:chinese-names": "node scripts/migrate-chinese-name-infra.js",
+    "migrate:frontend-fields": "node scripts/migrate-frontend-fields.js",
+    "migrate:iplant-enrichment": "node scripts/migrate-iplant-enrichment-infra.js",
+    "cn:update": "node scripts/batch-update-chinese-names.js",
+    "iplant:enrich": "node scripts/enrich-plants-from-iplant.js",
+    "human-review:export": "node scripts/export-human-review-queue.js",
+    "cn:review-high:prepare": "node scripts/high-priority-manual-pipeline.js prepare",
+    "cn:review-high:merge": "node scripts/high-priority-manual-pipeline.js merge",
+    "cn:review-hybrid:prepare": "node scripts/high-priority-manual-pipeline.js prepare --mode=hybrid --limit=1797",
+    "cn:review-hybrid:init": "node scripts/init-hybrid-chinese-names.js",
+    "cn:review-hybrid:auto-fill": "node scripts/auto-fill-hybrid-chinese-names.js",
+    "cn:review-hybrid:import-direct": "node scripts/import-hybrid-review-direct.js",
+    "cn:review-hybrid:auto-all": "node scripts/hybrid-chinese-auto-all.js --limit=1797",
+    "cn:import-template": "node scripts/import-cn-template.js",
+    "import:wcvp": "node scripts/import-wcvp.js",
+    "build:wgsrpd:level3": "node scripts/build-wgsrpd-level3-csv.js",
+    "import:iucn": "node scripts/import-iucn-redlist.js",
+    "import:wdpa": "node scripts/import-wdpa.js",
+    "wcvp:sync:plants-fields": "node scripts/sync-plants-from-wcvp-names.js",
+    "taxonomy:repair-chain": "node scripts/repair-taxonomy-chain.js",
+    "taxonomy:migrate-subphylum": "node scripts/migrate-taxonomy-subphylum.js",
+    "migrate:schema:2026-03": "node scripts/migrate-schema-evolution-2026-03.js",
+    "fetch:chinese-names": "node scripts/fetch-chinese-names.js",
+    "wcvp:complete": "node scripts/fill-wcvp-taxonomy.js",
+    "wcvp:chinese:coverage": "node scripts/run-chinese-mapping-until-threshold.js",
+    "images:standardize:common": "node scripts/standardize-common-plant-images.js"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "bcryptjs": "^2.4.3",
+    "cheerio": "^1.1.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jimp": "^1.6.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.9.7",
+    "sequelize": "^6.35.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
