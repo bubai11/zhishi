@@ -67,14 +67,18 @@ class PlantController {
     }
   }
 
-  async getObservations(req, res) {
+  async getDistributions(req, res) {
     try {
       const { id } = req.params;
-      const observations = await plantService.getPlantObservations(id);
-      res.json({ code: 200, message: 'success', data: observations });
+      const distributions = await plantService.getPlantDistributions(id);
+      res.json({ code: 200, message: 'success', data: distributions });
     } catch (err) {
       res.status(400).json({ code: 400, message: err.message || '获取失败' });
     }
+  }
+
+  async getObservations(req, res) {
+    return this.getDistributions(req, res);
   }
 }
 

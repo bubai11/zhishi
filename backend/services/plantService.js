@@ -3,7 +3,7 @@ const {
   Plants,
   PlantDetail,
   Taxa,
-  PlantObservations,
+  PlantDistributions,
   PlantMedia,
   MediaAssets,
   PlantEcology,
@@ -17,6 +17,11 @@ const {
   formatIucnCategory,
   formatTaxonLabel
 } = require('./frontendTransformers');
+const cache = require('../lib/serverCache');
+
+const POPULAR_TTL      = 30 * 60 * 1000;   // 30 分钟（热度排名）
+const ANALYTICS_TTL    = 60 * 60 * 1000;   // 1 小时（统计汇总）
+const STATS_TTL        = 10 * 60 * 1000;   // 10 分钟（物种/图像/用户数）
 
 function escapeLikeText(value = '') {
   return String(value).replace(/[\\%_]/g, '\\$&');
@@ -83,6 +88,30 @@ class PlantService {
     const offset = (page - 1) * pageSize;
     const keyword = String(params.q || params.keyword || '').trim();
     const sort = String(params.sort || 'latest').toLowerCase();
+    const familyFilter = String(params.family || '').trim();
+    const genusFilter = String(params.genus || '').trim();
+    const divisionFilter = String(params.division || '').trim();
+
+    if (sort !== 'popular' || keyword || familyFilter || genusFilter || divisionFilter) {
+      return this._queryAllPlants(params);
+    }
+
+    // popular 且无额外过滤时，整体结果缓存30分钟（该查询需5s+）
+    if (sort === 'popular' && !keyword && !familyFilter && !genusFilter) {
+      const cacheKey = `plant:popular:${page}:${pageSize}`;
+      return cache.getOrSet(cacheKey, () => this._queryAllPlants(params), POPULAR_TTL);
+    }
+
+    return this._queryAllPlants(params);
+  }
+
+  async _queryAllPlants(params = {}) {
+    const page = Math.max(1, Number(params.page) || 1);
+    const pageSize = Math.max(1, Math.min(100, Number(params.pageSize || params.limit) || 20));
+    const offset = (page - 1) * pageSize;
+    const keyword = String(params.q || params.keyword || '').trim();
+    const sort = String(params.sort || 'latest').toLowerCase();
+    const divisionFilter = String(params.division || '').trim();
     const replacements = {
       limit: pageSize,
       offset
@@ -149,6 +178,11 @@ class PlantService {
       whereClauses.push('p.wcvp_genus = :genus');
     }
 
+    if (divisionFilter) {
+      replacements.division = divisionFilter;
+      whereClauses.push('(dt.scientific_name = :division OR dt.chinese_name = :division)');
+    }
+
     const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
     const usePopularityJoin = sort === 'popular';
     const popularityJoinSql = usePopularityJoin
@@ -169,6 +203,17 @@ class PlantService {
           GROUP BY scientific_name
         ) tf ON tf.scientific_name = p.wcvp_family
       `;
+    const divisionJoinSql = divisionFilter
+      ? `
+        LEFT JOIN taxa ds ON ds.id = p.taxon_id
+        LEFT JOIN taxa dg ON dg.id = ds.parent_id
+        LEFT JOIN taxa df ON df.id = dg.parent_id
+        LEFT JOIN taxa dord ON dord.id = df.parent_id
+        LEFT JOIN taxa dcls ON dcls.id = dord.parent_id
+        LEFT JOIN taxa dsp ON dsp.id = dcls.parent_id AND dsp.taxon_rank = 'subphylum'
+        LEFT JOIN taxa dt ON dt.id = CASE WHEN dsp.id IS NOT NULL THEN dsp.parent_id ELSE dcls.parent_id END
+      `
+      : '';
 
     const orderSql = sort === 'popular'
       ? 'ORDER BY COALESCE(pp.popularity_score, 0) DESC, p.id DESC'
@@ -196,6 +241,7 @@ class PlantService {
           ${matchRankSql} AS match_rank
         FROM plants p
         ${familyJoinSql}
+        ${divisionJoinSql}
         ${popularityJoinSql}
         ${whereSql}
         ${orderSql}
@@ -211,6 +257,7 @@ class PlantService {
       `
         SELECT COUNT(*) AS total
         FROM plants p
+        ${divisionJoinSql}
         ${whereSql}
       `,
       {
@@ -225,6 +272,10 @@ class PlantService {
       page,
       pageSize
     };
+  }
+
+  async getDistributionCount(plantId) {
+    return PlantDistributions.count({ where: { plant_id: plantId } });
   }
 
   async getPlantById(id) {
@@ -248,9 +299,9 @@ class PlantService {
     }
 
     const plainPlant = plant.get({ plain: true });
-    const [taxonomyChain, observationCount] = await Promise.all([
+    const [taxonomyChain, distributionCount] = await Promise.all([
       this.getTaxonomyChain(plainPlant.taxon_id),
-      PlantObservations.count({ where: { plant_id: id } })
+      this.getDistributionCount(id)
     ]);
     const taxonomy = this.buildTaxonomyPayload(taxonomyChain, plainPlant);
     const genusTaxon = taxonomyChain.find((item) => item.taxon_rank === 'genus');
@@ -289,10 +340,11 @@ class PlantService {
       detail: {
         intro: plainPlant.detail?.intro || '',
         morphology: plainPlant.detail?.morphology || '',
-        ecology_importance: plainPlant.detail?.habitat || plainPlant.detail?.uses || '',
+        ecology_importance: plainPlant.detail?.ecology_importance || plainPlant.detail?.habitat || plainPlant.detail?.uses || '',
         distribution_text: plainPlant.detail?.distribution || ''
       },
-      observation_count: observationCount,
+      distribution_count: distributionCount,
+      observation_count: distributionCount,
       conservation_status: formatIucnCategory(threat?.red_list_category),
       iucn_category: threat?.red_list_category || null,
       translation_source: plainPlant.translation_source || null,
@@ -301,83 +353,58 @@ class PlantService {
   }
 
   async getPlantStats() {
-    const [totalSpecies, totalImages, activeUsers] = await Promise.all([
-      Plants.count({ where: { chinese_name: { [Op.ne]: '' } } }),
-      MediaAssets.count(),
-      BrowseEvents.count({
-        distinct: true,
-        col: 'user_id',
-        where: {
-          occurred_at: {
-            [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    return cache.getOrSet('plant:stats', async () => {
+      const [totalSpecies, totalImages, activeUsers] = await Promise.all([
+        Plants.count({ where: { chinese_name: { [Op.ne]: '' } } }),
+        MediaAssets.count(),
+        BrowseEvents.count({
+          distinct: true,
+          col: 'user_id',
+          where: {
+            occurred_at: {
+              [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+            }
           }
-        }
-      })
-    ]);
+        })
+      ]);
 
-    return {
-      total_species: totalSpecies,
-      total_images: totalImages,
-      active_users: activeUsers
-    };
+      return {
+        total_species: totalSpecies,
+        total_images: totalImages,
+        active_users: activeUsers
+      };
+    }, STATS_TTL);
   }
 
   async getAnalyticsSummary() {
-    const now = new Date();
-    const currentPeriodStart = new Date(now);
-    currentPeriodStart.setFullYear(currentPeriodStart.getFullYear() - 1);
-    const previousPeriodStart = new Date(currentPeriodStart);
-    previousPeriodStart.setFullYear(previousPeriodStart.getFullYear() - 1);
+    return cache.getOrSet('plant:analytics:summary', async () => {
+      const [totalSpecies, criticalRegionsRows, threatenedCount, protectedAreas] = await Promise.all([
+        Plants.count(),
+        sequelize.query(
+          `
+            SELECT COUNT(*) AS total
+            FROM (
+              SELECT area_code_l3
+              FROM plant_distributions
+              GROUP BY area_code_l3
+              HAVING COUNT(DISTINCT plant_id) >= 10
+            ) hotspot_regions
+          `,
+          { type: QueryTypes.SELECT }
+        ),
+        ThreatenedSpecies.count({
+          where: { red_list_category: { [Op.in]: ['CR', 'EN', 'VU'] } }
+        }),
+        ProtectedAreas.count()
+      ]);
 
-    const [totalSpecies, criticalRegionsRows, threatenedCount, protectedAreas, currentPeriodAdds, previousPeriodAdds] = await Promise.all([
-      Plants.count(),
-      sequelize.query(
-        `
-          SELECT COUNT(*) AS total
-          FROM (
-            SELECT area_code_l3
-            FROM plant_distributions
-            GROUP BY area_code_l3
-            HAVING COUNT(DISTINCT plant_id) >= 10
-          ) hotspot_regions
-        `,
-        { type: QueryTypes.SELECT }
-      ),
-      ThreatenedSpecies.count({
-        where: { red_list_category: { [Op.in]: ['CR', 'EN', 'VU'] } }
-      }),
-      ProtectedAreas.count(),
-      Plants.count({
-        where: {
-          created_at: {
-            [Op.gte]: currentPeriodStart,
-            [Op.lt]: now
-          }
-        }
-      }),
-      Plants.count({
-        where: {
-          created_at: {
-            [Op.gte]: previousPeriodStart,
-            [Op.lt]: currentPeriodStart
-          }
-        }
-      })
-    ]);
-
-    const growthRateValue = previousPeriodAdds > 0
-      ? ((currentPeriodAdds - previousPeriodAdds) / previousPeriodAdds) * 100
-      : currentPeriodAdds > 0
-        ? 100
-        : 0;
-    const annualGrowthRate = `${growthRateValue >= 0 ? '+' : ''}${growthRateValue.toFixed(1)}%`;
-
-    return {
-      total_species: totalSpecies,
-      critical_regions: Number(criticalRegionsRows[0]?.total || 0),
-      annual_growth_rate: annualGrowthRate,
-      protected_areas: protectedAreas
-    };
+      return {
+        total_species: totalSpecies,
+        critical_regions: Number(criticalRegionsRows[0]?.total || 0),
+        threatened_species: threatenedCount,
+        protected_areas: protectedAreas
+      };
+    }, ANALYTICS_TTL);
   }
 
   async createPlant(data) {
@@ -438,16 +465,38 @@ class PlantService {
     return { id, message: '删除成功' };
   }
 
-  async getPlantObservations(id) {
+  async getPlantDistributions(id) {
     const plant = await Plants.findByPk(id);
     if (!plant) {
       throw new Error('植物不存在');
     }
 
-    return PlantObservations.findAll({
+    return PlantDistributions.findAll({
       where: { plant_id: id },
-      attributes: ['id', 'plant_id', 'plant_name', 'latitude', 'longitude', 'count', 'altitude', 'observation_date', 'description']
+      attributes: [
+        'id',
+        'plant_id',
+        'taxon_id',
+        'scientific_name',
+        'area_code_l1',
+        'area_code_l2',
+        'area_code_l3',
+        'area_name',
+        'continent',
+        'country_code',
+        'occurrence_status',
+        'introduced',
+        'extinct',
+        'latitude',
+        'longitude',
+        'data_source'
+      ],
+      order: [['area_name', 'ASC']]
     });
+  }
+
+  async getPlantObservations(id) {
+    return this.getPlantDistributions(id);
   }
 }
 

@@ -35,7 +35,8 @@ const options = {
   dryRun: false,
   force: false,
   startId: 0,
-  mappedOnly: false
+  mappedOnly: false,
+  placeholderOnly: false
 };
 
 for (const arg of args) {
@@ -47,6 +48,7 @@ for (const arg of args) {
   if (arg === '--dry-run') options.dryRun = true;
   if (arg === '--force') options.force = true;
   if (arg === '--mapped-only') options.mappedOnly = true;
+  if (arg === '--placeholder-only') options.placeholderOnly = true;
 }
 
 function ensureOutputDir() {
@@ -131,7 +133,18 @@ async function getBehaviorSnapshot(pool) {
   };
 }
 
-async function selectTopPlants(pool, limit, startId, mappedOnly) {
+function placeholderWhereClause(alias = 'p') {
+  return `(
+    ${alias}.cover_image IS NULL OR ${alias}.cover_image = ''
+    OR ${alias}.cover_image LIKE '%placehold.co/%'
+    OR ${alias}.cover_image LIKE '%via.placeholder.com/%'
+    OR ${alias}.cover_image LIKE '%source.unsplash.com/%'
+    OR ${alias}.cover_image LIKE '%images.unsplash.com/photo-1501004318641-b39e6451bec6%'
+    OR ${alias}.cover_image LIKE '/images/plants/placeholder/%'
+  )`;
+}
+
+async function selectTopPlants(pool, limit, startId, mappedOnly, placeholderOnly) {
   const behavior = await getBehaviorSnapshot(pool);
   const behaviorAvailable = behavior.browseEvents > 0 || behavior.favorites > 0 || behavior.popularityDaily > 0;
 
@@ -220,6 +233,7 @@ async function selectTopPlants(pool, limit, startId, mappedOnly) {
       ) m ON m.plant_id = p.id
       WHERE p.id >= ?
         ${mappedOnly ? "AND p.chinese_name IS NOT NULL AND p.chinese_name <> '' AND p.chinese_name <> p.scientific_name" : ''}
+        ${placeholderOnly ? `AND ${placeholderWhereClause('p')}` : ''}
       ORDER BY priority_score DESC, p.id ASC
       LIMIT ?
     `,
@@ -419,7 +433,7 @@ async function main() {
   });
 
   const startedAt = Date.now();
-  const ranking = await selectTopPlants(pool, options.limit, options.startId, options.mappedOnly);
+  const ranking = await selectTopPlants(pool, options.limit, options.startId, options.mappedOnly, options.placeholderOnly);
   const queue = ranking.plants.filter((plant) => options.force || isPlaceholderUrl(plant.cover_image));
 
   const stats = {
@@ -538,6 +552,7 @@ async function main() {
     `- dry run: ${options.dryRun}`,
     `- force overwrite: ${options.force}`,
     `- mapped-only mode: ${options.mappedOnly}`,
+    `- placeholder-only mode: ${options.placeholderOnly}`,
     '',
     '## Behavior Analysis',
     '',

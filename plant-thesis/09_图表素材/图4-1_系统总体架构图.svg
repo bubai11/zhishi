@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1180" viewBox="0 0 1400 1180">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2563eb" />
+    </marker>
+    <style>
+      .title { font: 700 34px "Microsoft YaHei", "SimHei", sans-serif; fill: #0f172a; }
+      .layer-title { font: 700 24px "Microsoft YaHei", "SimHei", sans-serif; fill: #064e3b; }
+      .tech { font: 18px "Microsoft YaHei", "SimHei", sans-serif; fill: #475569; }
+      .box-title { font: 700 18px "Microsoft YaHei", "SimHei", sans-serif; fill: #0f172a; }
+      .box-text { font: 16px "Microsoft YaHei", "SimHei", sans-serif; fill: #334155; }
+      .arrow-text { font: 16px "Microsoft YaHei", "SimHei", sans-serif; fill: #1d4ed8; }
+      .note { font: 16px "Microsoft YaHei", "SimHei", sans-serif; fill: #475569; }
+      .layer { stroke: #94a3b8; stroke-width: 2; rx: 22; }
+      .box { stroke: #64748b; stroke-width: 1.5; rx: 14; }
+      .arrow { stroke: #2563eb; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1400" height="1180" fill="#f8fafc"/>
+  <text x="700" y="54" text-anchor="middle" class="title">图4.1 系统总体架构图</text>
+
+  <!-- Frontend layer -->
+  <rect x="70" y="90" width="1260" height="210" fill="#ecfdf5" class="layer"/>
+  <text x="100" y="126" class="layer-title">前端交互层</text>
+  <text x="270" y="126" class="tech">React + TypeScript + Vite</text>
+  <g>
+    <rect x="105" y="155" width="155" height="92" fill="#ffffff" class="box"/>
+    <text x="182" y="188" text-anchor="middle" class="box-title">首页导览</text>
+    <text x="182" y="218" text-anchor="middle" class="box-text">系统入口</text>
+
+    <rect x="285" y="155" width="155" height="92" fill="#ffffff" class="box"/>
+    <text x="362" y="188" text-anchor="middle" class="box-title">植物库</text>
+    <text x="362" y="218" text-anchor="middle" class="box-text">搜索 / 筛选</text>
+
+    <rect x="465" y="155" width="155" height="92" fill="#ffffff" class="box"/>
+    <text x="542" y="188" text-anchor="middle" class="box-title">植物详情</text>
+    <text x="542" y="218" text-anchor="middle" class="box-text">图文展示</text>
+
+    <rect x="645" y="155" width="155" height="92" fill="#ffffff" class="box"/>
+    <text x="722" y="188" text-anchor="middle" class="box-title">分类认知</text>
+    <text x="722" y="218" text-anchor="middle" class="box-text">层级结构</text>
+
+    <rect x="825" y="155" width="155" height="92" fill="#ffffff" class="box"/>
+    <text x="902" y="188" text-anchor="middle" class="box-title">可视化分析</text>
+    <text x="902" y="218" text-anchor="middle" class="box-text">分布 / 统计</text>
+
+    <rect x="1005" y="155" width="155" height="92" fill="#ffffff" class="box"/>
+    <text x="1082" y="188" text-anchor="middle" class="box-title">学习中心</text>
+    <text x="1082" y="218" text-anchor="middle" class="box-text">推荐测验</text>
+
+    <rect x="1185" y="155" width="110" height="92" fill="#ffffff" class="box"/>
+    <text x="1240" y="188" text-anchor="middle" class="box-title">个人中心</text>
+    <text x="1240" y="218" text-anchor="middle" class="box-text">状态统计</text>
+  </g>
+
+  <!-- API layer -->
+  <rect x="70" y="380" width="1260" height="235" fill="#eff6ff" class="layer"/>
+  <text x="100" y="416" class="layer-title" fill="#1e3a8a">后端服务层</text>
+  <text x="270" y="416" class="tech">Node.js + Express + RESTful API</text>
+  <g>
+    <rect x="105" y="445" width="175" height="98" fill="#ffffff" class="box"/>
+    <text x="192" y="478" text-anchor="middle" class="box-title">API 路由</text>
+    <text x="192" y="508" text-anchor="middle" class="box-text">请求分发</text>
+
+    <rect x="310" y="445" width="175" height="98" fill="#ffffff" class="box"/>
+    <text x="397" y="478" text-anchor="middle" class="box-title">植物数据服务</text>
+    <text x="397" y="508" text-anchor="middle" class="box-text">列表 / 详情</text>
+
+    <rect x="515" y="445" width="175" height="98" fill="#ffffff" class="box"/>
+    <text x="602" y="478" text-anchor="middle" class="box-title">分类查询服务</text>
+    <text x="602" y="508" text-anchor="middle" class="box-text">分类层级</text>
+
+    <rect x="720" y="445" width="175" height="98" fill="#ffffff" class="box"/>
+    <text x="807" y="478" text-anchor="middle" class="box-title">可视化分析服务</text>
+    <text x="807" y="508" text-anchor="middle" class="box-text">统计 / 分布</text>
+
+    <rect x="925" y="445" width="175" height="98" fill="#ffffff" class="box"/>
+    <text x="1012" y="478" text-anchor="middle" class="box-title">学习测验服务</text>
+    <text x="1012" y="508" text-anchor="middle" class="box-text">推荐 / 提交</text>
+
+    <rect x="1130" y="445" width="165" height="98" fill="#ffffff" class="box"/>
+    <text x="1212" y="478" text-anchor="middle" class="box-title">用户行为服务</text>
+    <text x="1212" y="508" text-anchor="middle" class="box-text">浏览 / 收藏</text>
+  </g>
+
+  <!-- ORM and DB layer -->
+  <rect x="70" y="705" width="1260" height="270" fill="#fff7ed" class="layer"/>
+  <text x="100" y="741" class="layer-title" fill="#9a3412">数据访问层与数据支撑层</text>
+  <text x="430" y="741" class="tech">Sequelize ORM + MySQL 植物知识数据库</text>
+
+  <rect x="105" y="775" width="260" height="135" fill="#ffffff" class="box"/>
+  <text x="235" y="812" text-anchor="middle" class="box-title">Sequelize ORM</text>
+  <text x="235" y="842" text-anchor="middle" class="box-text">模型映射与关联关系</text>
+  <text x="235" y="872" text-anchor="middle" class="box-text">查询封装与统计计算</text>
+
+  <rect x="420" y="775" width="875" height="160" fill="#ffffff" class="box"/>
+  <text x="857" y="812" text-anchor="middle" class="box-title">MySQL 植物知识数据库</text>
+  <g>
+    <rect x="455" y="835" width="180" height="62" fill="#fffbeb" class="box"/>
+    <text x="545" y="862" text-anchor="middle" class="box-text">植物信息表</text>
+    <text x="545" y="884" text-anchor="middle" class="box-text">plants</text>
+
+    <rect x="655" y="835" width="180" height="62" fill="#fffbeb" class="box"/>
+    <text x="745" y="862" text-anchor="middle" class="box-text">分类与标签表</text>
+    <text x="745" y="884" text-anchor="middle" class="box-text">categories / tags</text>
+
+    <rect x="855" y="835" width="180" height="62" fill="#fffbeb" class="box"/>
+    <text x="945" y="862" text-anchor="middle" class="box-text">植物图片表</text>
+    <text x="945" y="884" text-anchor="middle" class="box-text">plant_images</text>
+
+    <rect x="1055" y="835" width="205" height="62" fill="#fffbeb" class="box"/>
+    <text x="1157" y="862" text-anchor="middle" class="box-text">题库与行为表</text>
+    <text x="1157" y="884" text-anchor="middle" class="box-text">quiz / behavior</text>
+  </g>
+
+  <!-- Data source layer -->
+  <rect x="70" y="1030" width="1260" height="115" fill="#f1f5f9" class="layer"/>
+  <text x="100" y="1066" class="layer-title" fill="#334155">多源数据与系统支撑层</text>
+  <g>
+    <rect x="350" y="1058" width="190" height="58" fill="#ffffff" class="box"/>
+    <text x="445" y="1094" text-anchor="middle" class="box-text">网络采集数据</text>
+
+    <rect x="570" y="1058" width="245" height="58" fill="#ffffff" class="box"/>
+    <text x="692" y="1083" text-anchor="middle" class="box-text">开放植物数据</text>
+    <text x="692" y="1105" text-anchor="middle" class="box-text">WCVP / IUCN / WDPA / WGSRPD</text>
+
+    <rect x="845" y="1058" width="190" height="58" fill="#ffffff" class="box"/>
+    <text x="940" y="1094" text-anchor="middle" class="box-text">人工整理校核</text>
+
+    <rect x="1065" y="1058" width="190" height="58" fill="#ffffff" class="box"/>
+    <text x="1160" y="1083" text-anchor="middle" class="box-text">数据清洗导入</text>
+    <text x="1160" y="1105" text-anchor="middle" class="box-text">脚本维护</text>
+  </g>
+
+  <!-- Arrows -->
+  <path d="M700 300 L700 374" class="arrow"/>
+  <text x="720" y="344" class="arrow-text">HTTP 请求 / JSON 响应</text>
+
+  <path d="M700 615 L700 699" class="arrow"/>
+  <text x="720" y="665" class="arrow-text">业务调用 / 数据读写</text>
+
+  <path d="M700 975 L700 1024" class="arrow"/>
+  <text x="720" y="1008" class="arrow-text">数据融合支撑</text>
+
+  <path d="M365 842 L414 842" class="arrow"/>
+
+  <text x="700" y="1167" text-anchor="middle" class="note">说明：数据库设计主要体现在“数据支撑层”，其核心表支撑植物展示、可视化分析、用户行为记录与学习交互。</text>
+</svg>

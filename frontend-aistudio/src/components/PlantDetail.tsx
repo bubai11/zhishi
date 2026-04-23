@@ -81,7 +81,7 @@ export default function PlantDetail({ plantId, setCurrentPage, token }: PlantDet
         return {
           label: detail?.conservation_status || '暂无数据',
           tone: 'bg-zinc-50 border-zinc-100 text-zinc-700',
-          description: '当前知识库尚未提供标准化保护等级，可结合分布、观察记录和生态描述进行综合判断。'
+          description: '当前知识库尚未提供标准化保护等级，可结合分布记录和生态描述进行综合判断。'
         };
     }
   })();
@@ -242,7 +242,7 @@ export default function PlantDetail({ plantId, setCurrentPage, token }: PlantDet
               <MapPin size={18} className="text-emerald-600" />
             </div>
             <p className="text-sm text-zinc-600">{detail.detail.distribution_text || '暂无分布描述。'}</p>
-            <p className="text-xs text-zinc-500">观察记录数：{detail.observation_count}</p>
+            <p className="text-xs text-zinc-500">分布记录数：{detail.distribution_count ?? detail.observation_count ?? 0}</p>
           </div>
 
           <div className="space-y-5 rounded-2xl border border-zinc-100 bg-white p-8 shadow-sm">
@@ -256,7 +256,7 @@ export default function PlantDetail({ plantId, setCurrentPage, token }: PlantDet
               <p className="mt-2 text-sm leading-6">{conservationGuide.description}</p>
             </div>
             <div className="rounded-2xl bg-zinc-50 p-4 text-sm leading-6 text-zinc-600">
-              学习提示：可以先结合分布区域、观察记录数量和生态说明理解该植物的生存环境，再对照保护等级，更容易建立“植物特征与保护需求之间的联系”。
+              学习提示：可以先结合分布区域、分布记录数量和生态说明理解该植物的生存环境，再对照保护等级，更容易建立“植物特征与保护需求之间的联系”。
             </div>
           </div>
         </aside>

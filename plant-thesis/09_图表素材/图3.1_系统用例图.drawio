@@ -1,0 +1,246 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="system-use-case-standard" name="图3.1_系统用例图">
+    <mxGraphModel dx="1420" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1420" pageHeight="930" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="system-boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=8 4;strokeWidth=1.3;fontSize=16;fontStyle=1;fontFamily=SimSun;verticalAlign=top;spacingTop=12" value="植物科普可视化交互系统（前台在线功能）" vertex="1">
+          <mxGeometry height="650" width="1030" x="250" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="support-boundary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=8 4;strokeWidth=1.3;fontSize=16;fontStyle=1;fontFamily=SimSun;verticalAlign=top;spacingTop=12" value="系统支撑流程（脚本级，非前台登录角色）" vertex="1">
+          <mxGeometry height="135" width="1030" x="250" y="725" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-guest" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;fontFamily=SimSun;strokeColor=#000000;fillColor=#ffffff" value="游客" vertex="1">
+          <mxGeometry height="120" width="60" x="80" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-user" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;fontFamily=SimSun;strokeColor=#000000;fillColor=#ffffff" value="注册用户" vertex="1">
+          <mxGeometry height="120" width="60" x="80" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="actor-maintainer" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;fontFamily=SimSun;strokeColor=#000000;fillColor=#ffffff" value="数据维护人员" vertex="1">
+          <mxGeometry height="120" width="60" x="80" y="735" as="geometry" />
+        </mxCell>
+        <mxCell id="group-basic" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=4 3;fontSize=14;fontFamily=SimSun;verticalAlign=top;spacingTop=8" value="基础浏览与检索" vertex="1">
+          <mxGeometry height="145" width="920" x="300" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-browse" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="浏览植物库" vertex="1">
+          <mxGeometry height="54" width="170" x="350" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-search" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="检索与筛选植物" vertex="1">
+          <mxGeometry height="54" width="180" x="640" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-detail" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="查看植物详情" vertex="1">
+          <mxGeometry height="54" width="180" x="930" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="group-visual" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=4 3;fontSize=14;fontFamily=SimSun;verticalAlign=top;spacingTop=8" value="分类认知与可视化分析" vertex="1">
+          <mxGeometry height="205" width="920" x="300" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-taxonomy" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="浏览分类树" vertex="1">
+          <mxGeometry height="54" width="170" x="350" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-open-taxonomy" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="按分类查看植物" vertex="1">
+          <mxGeometry height="54" width="190" x="635" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-analysis" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="查看可视化分析中心" vertex="1">
+          <mxGeometry height="54" width="205" x="920" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-region" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="查看区域摘要与保护地" vertex="1">
+          <mxGeometry height="54" width="220" x="500" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-family-entry" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="点击主要科属构成&lt;br&gt;筛选植物库" vertex="1">
+          <mxGeometry height="62" width="230" x="860" y="376" as="geometry" />
+        </mxCell>
+        <mxCell id="group-alert" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=4 3;fontSize=14;fontFamily=SimSun;verticalAlign=top;spacingTop=8" value="预警与公开信息" vertex="1">
+          <mxGeometry height="130" width="330" x="300" y="495" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-public-alert" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="查看公开濒危预警" vertex="1">
+          <mxGeometry height="54" width="210" x="360" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="group-user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=4 3;fontSize=14;fontFamily=SimSun;verticalAlign=top;spacingTop=8" value="注册用户功能" vertex="1">
+          <mxGeometry height="130" width="560" x="660" y="495" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-login" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="注册 / 登录" vertex="1">
+          <mxGeometry height="50" width="135" x="690" y="535" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-favorite" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="收藏植物" vertex="1">
+          <mxGeometry height="50" width="130" x="850" y="535" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-history" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="查看浏览历史" vertex="1">
+          <mxGeometry height="50" width="150" x="1000" y="535" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-quiz" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="参与学习测验" vertex="1">
+          <mxGeometry height="50" width="150" x="735" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-alert-manage" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="管理预警状态" vertex="1">
+          <mxGeometry height="50" width="150" x="910" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-profile" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="查看个人中心" vertex="1">
+          <mxGeometry height="50" width="145" x="1080" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-import" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="导入多源数据" vertex="1">
+          <mxGeometry height="54" width="190" x="350" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-repair" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="补全与修复数据" vertex="1">
+          <mxGeometry height="54" width="200" x="640" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="uc-map" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" value="维护 WGSRPD 到 ISO3&lt;br&gt;区域映射" vertex="1">
+          <mxGeometry height="62" width="240" x="930" y="776" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-guest-browse" edge="1" parent="1" source="actor-guest" target="uc-browse" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="142" />
+              <mxPoint x="190" y="142" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-guest-taxonomy" edge="1" parent="1" source="actor-guest" target="uc-taxonomy" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="327" />
+              <mxPoint x="190" y="327" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-guest-analysis" edge="1" parent="1" source="actor-guest" target="uc-analysis" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="265" />
+              <mxPoint x="875" y="265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-guest-alert" edge="1" parent="1" source="actor-guest" target="uc-public-alert" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="572" />
+              <mxPoint x="190" y="572" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-user-login" edge="1" parent="1" source="actor-user" target="uc-login" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="560" />
+              <mxPoint x="650" y="560" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-user-favorite" edge="1" parent="1" source="actor-user" target="uc-favorite" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="515" />
+              <mxPoint x="840" y="515" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-user-history" edge="1" parent="1" source="actor-user" target="uc-history" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="495" />
+              <mxPoint x="990" y="495" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-user-quiz" edge="1" parent="1" source="actor-user" target="uc-quiz" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="625" />
+              <mxPoint x="715" y="625" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-user-alert" edge="1" parent="1" source="actor-user" target="uc-alert-manage" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="655" />
+              <mxPoint x="900" y="655" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-user-profile" edge="1" parent="1" source="actor-user" target="uc-profile" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="675" />
+              <mxPoint x="1070" y="675" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-user-inherit" edge="1" parent="1" source="actor-user" target="actor-guest" style="endArrow=block;endFill=0;html=1;rounded=0;strokeColor=#000000;dashed=1;fontSize=12;fontFamily=SimSun;edgeStyle=orthogonalEdgeStyle" value="继承">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="150" y="400" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-maintainer-import" edge="1" parent="1" source="actor-maintainer" target="uc-import" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="807" />
+              <mxPoint x="210" y="807" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-maintainer-repair" edge="1" parent="1" source="actor-maintainer" target="uc-repair" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="760" />
+              <mxPoint x="630" y="760" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-maintainer-map" edge="1" parent="1" source="actor-maintainer" target="uc-map" style="endArrow=none;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="850" />
+              <mxPoint x="915" y="850" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-browse-search" edge="1" parent="1" source="uc-browse" target="uc-search" style="endArrow=open;html=1;rounded=0;strokeColor=#000000;dashed=1;fontSize=12;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="95" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-browse-detail" edge="1" parent="1" source="uc-detail" target="uc-browse" style="endArrow=open;html=1;rounded=0;strokeColor=#000000;dashed=1;fontSize=12;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle" value="&lt;&lt;extend&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="190" />
+              <mxPoint x="435" y="190" />
+            </Array>
+            <mxPoint x="725" y="200" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-taxonomy-open" edge="1" parent="1" source="uc-open-taxonomy" target="uc-taxonomy" style="endArrow=open;html=1;rounded=0;strokeColor=#000000;dashed=1;fontSize=12;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle" value="&lt;&lt;extend&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="280" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-analysis-region" edge="1" parent="1" source="uc-analysis" target="uc-region" style="endArrow=open;html=1;rounded=0;strokeColor=#000000;dashed=1;fontSize=12;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="465" />
+              <mxPoint x="610" y="465" />
+            </Array>
+            <mxPoint x="800" y="478" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-analysis-family" edge="1" parent="1" source="uc-family-entry" target="uc-analysis" style="endArrow=open;html=1;rounded=0;strokeColor=#000000;dashed=1;fontSize=12;fontFamily=Times New Roman;edgeStyle=orthogonalEdgeStyle" value="&lt;&lt;extend&gt;&gt;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1140" y="407" />
+              <mxPoint x="1140" y="327" />
+            </Array>
+            <mxPoint x="1165" y="370" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-family-search" edge="1" parent="1" source="uc-family-entry" target="uc-search" style="endArrow=open;html=1;rounded=0;strokeColor=#000000;dashed=1;fontSize=12;fontFamily=SimSun;edgeStyle=orthogonalEdgeStyle" value="family 筛选">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="975" y="230" />
+              <mxPoint x="730" y="230" />
+            </Array>
+            <mxPoint x="860" y="242" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

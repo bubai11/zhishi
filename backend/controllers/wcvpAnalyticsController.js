@@ -27,6 +27,15 @@ class WcvpAnalyticsController {
       res.status(400).json({ code: 400, message: err.message || '获取失败' });
     }
   }
+
+  async regionProtectionSummary(req, res) {
+    try {
+      const data = await analyticsService.regionProtectionSummary(req.query || {});
+      res.json({ code: 200, message: '获取成功', data });
+    } catch (err) {
+      res.status(400).json({ code: 400, message: err.message || '获取失败' });
+    }
+  }
 }
 
 module.exports = new WcvpAnalyticsController();

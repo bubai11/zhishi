@@ -28,9 +28,9 @@ const INDEX_DEFINITIONS = [
     ddl: 'CREATE INDEX idx_plants_family ON plants(wcvp_family)'
   },
   {
-    tableName: 'plant_observations',
-    indexName: 'idx_plant_observations_plant_id',
-    ddl: 'CREATE INDEX idx_plant_observations_plant_id ON plant_observations(plant_id)'
+    tableName: 'plant_distributions',
+    indexName: 'idx_plant_distributions_plant_id',
+    ddl: 'CREATE INDEX idx_plant_distributions_plant_id ON plant_distributions(plant_id)'
   },
   {
     tableName: 'plant_popularity_daily',

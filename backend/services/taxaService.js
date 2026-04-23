@@ -27,6 +27,30 @@ function rankSortSql(alias = 't') {
   return `FIELD(${alias}.taxon_rank, 'kingdom', 'phylum', 'subphylum', 'class', 'order', 'family', 'genus', 'species')`;
 }
 
+function resolveRankKeyword(keyword) {
+  const normalized = normalizeTaxonText(keyword).toLowerCase();
+  const rankMap = new Map([
+    ['界', 'kingdom'],
+    ['kingdom', 'kingdom'],
+    ['门', 'phylum'],
+    ['phylum', 'phylum'],
+    ['亚门', 'subphylum'],
+    ['subphylum', 'subphylum'],
+    ['纲', 'class'],
+    ['class', 'class'],
+    ['目', 'order'],
+    ['order', 'order'],
+    ['科', 'family'],
+    ['family', 'family'],
+    ['属', 'genus'],
+    ['genus', 'genus'],
+    ['种', 'species'],
+    ['species', 'species']
+  ]);
+
+  return rankMap.get(normalized) || '';
+}
+
 function buildTaxonDescription(row) {
   const rankLabel = RANK_LABELS[row.taxon_rank] || row.taxon_rank;
   const displayName = normalizeTaxonText(row.chinese_name) || normalizeTaxonText(row.scientific_name) || '该节点';
@@ -124,6 +148,170 @@ class TaxaService {
       description: buildTaxonDescription(row),
       has_children: Boolean(row.has_children)
     }));
+  }
+
+  async searchTaxa(query = {}) {
+    const keyword = normalizeTaxonText(query.q || query.keyword);
+    const limit = Math.max(1, Math.min(30, Number(query.limit) || 12));
+    const rankKeyword = resolveRankKeyword(keyword);
+
+    if (!keyword) {
+      return { total: 0, list: [] };
+    }
+
+    const rows = rankKeyword
+      ? await sequelize.query(
+        `
+          SELECT
+            t.id,
+            t.parent_id,
+            t.taxon_rank,
+            t.scientific_name,
+            t.chinese_name,
+            t.description,
+            COALESCE(NULLIF(t.chinese_name, ''), t.scientific_name) AS matched_name,
+            'taxon' AS match_source,
+            EXISTS (
+              SELECT 1
+              FROM taxa child
+              WHERE child.parent_id = t.id
+              LIMIT 1
+            ) AS has_children,
+            0 AS relevance
+          FROM taxa t
+          WHERE t.taxon_rank = :rankKeyword
+          ORDER BY COALESCE(NULLIF(t.chinese_name, ''), t.scientific_name) ASC, t.id ASC
+          LIMIT :limit
+        `,
+        {
+          replacements: { rankKeyword, limit },
+          type: QueryTypes.SELECT
+        }
+      )
+      : await sequelize.query(
+        `
+          SELECT *
+          FROM (
+            SELECT
+              t.id,
+              t.parent_id,
+              t.taxon_rank,
+              t.scientific_name,
+              t.chinese_name,
+              t.description,
+              COALESCE(NULLIF(t.chinese_name, ''), t.scientific_name) AS matched_name,
+              'taxon' AS match_source,
+              EXISTS (
+                SELECT 1
+                FROM taxa child
+                WHERE child.parent_id = t.id
+                LIMIT 1
+              ) AS has_children,
+              CASE
+                WHEN t.chinese_name = :keyword THEN 0
+                WHEN t.scientific_name = :keyword THEN 1
+                WHEN t.chinese_name LIKE :keyword THEN 2
+                ELSE 3
+              END AS relevance
+            FROM taxa t
+            WHERE t.chinese_name LIKE :keyword
+               OR t.scientific_name LIKE :keyword
+
+            UNION ALL
+
+            SELECT
+              t.id,
+              t.parent_id,
+              t.taxon_rank,
+              t.scientific_name,
+              t.chinese_name,
+              t.description,
+              COALESCE(NULLIF(p.chinese_name, ''), p.scientific_name, t.scientific_name) AS matched_name,
+              'plant' AS match_source,
+              EXISTS (
+                SELECT 1
+                FROM taxa child
+                WHERE child.parent_id = t.id
+                LIMIT 1
+              ) AS has_children,
+              CASE
+                WHEN p.chinese_name = :keyword THEN 0
+                WHEN p.scientific_name = :keyword THEN 1
+                WHEN p.chinese_name LIKE :keyword THEN 2
+                ELSE 3
+              END AS relevance
+            FROM plants p
+            INNER JOIN taxa t ON t.id = p.taxon_id
+            WHERE p.chinese_name LIKE :keyword
+               OR p.scientific_name LIKE :keyword
+          ) matched
+          ORDER BY relevance ASC, ${rankSortSql('matched')} DESC, matched_name ASC, id ASC
+          LIMIT :limit
+        `,
+        {
+          replacements: {
+            keyword: `%${keyword}%`,
+            limit
+          },
+          type: QueryTypes.SELECT
+        }
+      );
+
+    const byId = new Map();
+    rows.forEach((row) => {
+      if (!byId.has(row.id)) {
+        byId.set(row.id, row);
+      }
+    });
+
+    const list = [];
+    for (const row of byId.values()) {
+      const path = await this.getTaxonPath(row.id);
+      list.push({
+        id: String(row.id),
+        parent_id: row.parent_id ? String(row.parent_id) : null,
+        name: row.chinese_name || row.matched_name || row.scientific_name,
+        rank: row.taxon_rank,
+        scientific_name: row.scientific_name,
+        description: buildTaxonDescription(row),
+        has_children: Boolean(row.has_children),
+        matched_name: row.matched_name,
+        match_source: row.match_source,
+        path
+      });
+    }
+
+    return {
+      total: list.length,
+      list
+    };
+  }
+
+  async getTaxonPath(taxonId) {
+    const path = [];
+    const visited = new Set();
+    let currentId = Number(taxonId);
+
+    while (Number.isInteger(currentId) && currentId > 0 && !visited.has(currentId)) {
+      visited.add(currentId);
+      const row = await Taxa.findByPk(currentId, {
+        attributes: ['id', 'parent_id', 'taxon_rank', 'scientific_name', 'chinese_name', 'description']
+      });
+
+      if (!row) break;
+
+      const plain = row.get({ plain: true });
+      path.unshift({
+        id: String(plain.id),
+        parent_id: plain.parent_id ? String(plain.parent_id) : null,
+        name: plain.chinese_name || plain.scientific_name,
+        rank: plain.taxon_rank,
+        scientific_name: plain.scientific_name
+      });
+      currentId = Number(plain.parent_id);
+    }
+
+    return path;
   }
 
   async getFamilies() {

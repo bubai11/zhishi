@@ -61,9 +61,15 @@ class ProtectedAreaService {
   async stats(params = {}) {
     const iso3 = String(params.iso3 || '').trim().toUpperCase();
     const siteType = String(params.siteType || '').trim().toUpperCase();
+    const iucnCategory = String(params.iucnCategory || '').trim();
+    const status = String(params.status || '').trim();
+    const realm = String(params.realm || '').trim();
     const where = {};
     if (iso3) where.iso3 = iso3;
     if (siteType) where.site_type = siteType;
+    if (iucnCategory) where.iucn_category = iucnCategory;
+    if (status) where.status = status;
+    if (realm) where.realm = realm;
 
     const total = await ProtectedAreas.count({ where });
     const byCategory = await ProtectedAreas.findAll({

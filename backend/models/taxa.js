@@ -9,7 +9,6 @@ const Taxa = sequelize.define('Taxa', {
   },
   parent_id: { type: DataTypes.INTEGER },
   scientific_name: { type: DataTypes.STRING(100) },
-  common_name: { type: DataTypes.STRING(200) },
   chinese_name: { type: DataTypes.STRING(100) },
   description: { type: DataTypes.TEXT },
   key_features: { type: DataTypes.TEXT },

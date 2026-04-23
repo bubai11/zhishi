@@ -347,6 +347,10 @@ class ChineseNameService {
     );
 
     const mediaCandidates = this.extractIPlantMediaCandidates($, normalizedScientificName, chineseName);
+    const linkedScientificNames = [
+      ...(acceptedName ? [acceptedName] : []),
+      ...this.extractIPlantLinkedScientificNamesFromHtml(html)
+    ].filter((value, index, arr) => value && arr.indexOf(value) === index);
     const intro = chineseName
       ? sanitizeText(
           `${chineseName}（${normalizedScientificName}）${aliases.length ? `，俗名：${aliases.join('、')}` : ''}`
@@ -364,14 +368,12 @@ class ChineseNameService {
       synonyms,
       intro,
       mediaCandidates,
-      linkedScientificNames: [
-        ...(acceptedName ? [acceptedName] : []),
-        ...this.extractIPlantLinkedScientificNamesFromHtml(html)
-      ].filter((value, index, arr) => value && arr.indexOf(value) === index),
+      linkedScientificNames,
       payload: {
         title: sanitizeText($('title').text()),
         aliases,
         synonyms,
+        linkedScientificNames,
         mediaCandidates
       }
     };

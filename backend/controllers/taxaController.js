@@ -29,6 +29,15 @@ class TaxaController {
     }
   }
 
+  async search(req, res) {
+    try {
+      const data = await taxaService.searchTaxa(req.query || {});
+      res.json({ code: 200, message: 'success', data });
+    } catch (err) {
+      res.status(400).json({ code: 400, message: err.message || '搜索失败' });
+    }
+  }
+
   async families(req, res) {
     try {
       const data = await taxaService.getFamilies();

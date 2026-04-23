@@ -1,185 +1,128 @@
-# 🌿 植物科普学习与知识可视化系统
+# 植物科普学习与知识可视化系统
 
-> 一个功能完整的植物学习和科普平台，集成了3D模型展示、数据可视化和交互式学习体验
+这是一个植物科普学习、分类浏览、物种详情、保护信息与知识可视化系统。当前项目由 Node.js 后端、MySQL 数据库和 React + TypeScript 前端组成。
 
-## ⚡ 快速开始
+## 当前技术栈
 
-👉 **新用户必读**：[QUICKSTART.md](./QUICKSTART.md) - **5分钟快速启动**
+| 层级 | 技术 |
+| --- | --- |
+| 前端 | React 19, TypeScript, Vite, Tailwind CSS, lucide-react, motion |
+| 后端 | Node.js, Express, Sequelize, MySQL |
+| 数据库 | MySQL 8.0+ |
+| 包管理 | npm |
 
-**一键启动**（Windows）：
+> 说明：历史文档中可能仍出现 Vue3、Element Plus 等描述，这些已经不是当前前端技术栈。请以本文件、`QUICKSTART.md`、`backend/DEVELOPMENT.md` 和 `backend/DATA_IMPORT_GUIDE.md` 为准。
+
+## 快速启动
+
+### 后端
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+默认 API 地址：
+
+```text
+http://localhost:3001
+```
+
+### 前端
+
+```bash
+cd frontend-aistudio
+npm install
+npm run dev
+```
+
+默认前端地址：
+
+```text
+http://localhost:3000
+```
+
+也可以在项目根目录使用一键脚本：
+
 ```bash
 start.bat
 ```
 
-**一键启动**（Mac/Linux）：
+或：
+
 ```bash
 bash start.sh
 ```
 
-或手动启动：
-```bash
-# 终端1：后端
-cd backend && npm run dev
+## 目录结构
 
-# 终端2：前端
-cd frontend-aistudio && npm run dev
-```
-
-访问应用：
-- 🌐 **前端**：http://localhost:3000
-- 🔗 **API**：http://localhost:3001
-
----
-
-## 📋 技术栈
-
-| 层级 | 技术 |
-|------|------|
-| **前端** | Vue3 + Vite + Element Plus + ECharts + Three.js |
-| **后端** | Node.js + Express + MySQL + Sequelize |
-| **数据库** | MySQL 8.0+ |
-| **包管理** | npm |
-| **开发工具** | nodemon（自动重启） + Vite HMR（热更新） |
-
----
-
-## ✨ 功能模块
-
-| 功能 | 说明 |
-|------|------|
-| 👤 **用户系统** | 注册、登录、个人资料管理 |
-| 🌱 **植物管理** | 分类法（taxonomy）、植物库、详情页 |
-| 📸 **多媒体展示** | 图片、视频、3D 模型展示 |
-| 📚 **学习系统** | 收藏、浏览历史、阅读统计 |
-| 📝 **测验系统** | 植物知识测验、成绩追踪 |
-| 📊 **可视化** | 分布地图、统计图表、3D 交互 |
-
----
-
-## 📂 项目结构
-
-```
+```text
 zhishi-plant-system/
-├── start.bat / start.sh           ⭐ 一键启动脚本
-├── QUICKSTART.md                  📖 快速启动指南（新手必读）
-├── SETUP.md                       📖 完整安装配置
-├── TECHNICAL_SUMMARY.md           📖 技术架构说明
-│
-├── backend/                       🔵 后端（Node.js + Express）
-│   ├── src/
-│   │   ├── app.js                │ 应用主文件
-│   │   ├── models/               │ 数据模型（15个）
-│   │   ├── controllers/          │ 业务控制器
-│   │   ├── services/             │ 业务逻辑层
-│   │   └── routes/               │ API 路由
-│   ├── DEVELOPMENT.md            │ 开发指南
-│   ├── API_PLANTS.md             │ 植物 API 文档
-│   ├── start-dev.bat/sh          │ 启动脚本
-│   └── nodemon.json              │ 监听配置
-│
-├── frontend-aistudio/            🟢 前端（React + Vite）
-│   ├── src/
-│   │   ├── components/           │ 页面组件
-│   │   ├── api.ts                │ API 客户端
-│   │   └── main.tsx              │ 应用入口
-│   └── vite.config.ts            │ Vite 配置
-│
-└── 📊 数据库文件
-    ├── plant_system.sql          表结构定义
-    └── INSERT_DATA.sql           示例数据
+  backend/               Node.js + Express 后端
+    src/app.js           后端应用入口
+    controllers/         控制器
+    routes/              API 路由
+    services/            业务服务
+    models/              Sequelize 模型
+    scripts/             数据导入、迁移、维护脚本
+    tests/               后端测试
+  frontend-aistudio/     React + TypeScript + Vite 前端
+    src/App.tsx          前端应用入口组件
+    src/api.ts           API 客户端
+    src/components/      页面与功能组件
+    src/types.ts         前端类型定义
+  data-source/           外部数据源目录
+  docs/                  当前文档索引与历史归档
+  plant_system.sql       基础数据库结构
+  INSERT_DATA.sql        示例数据
 ```
 
----
+## 可信文档入口
 
-## 🚀 开发工作流
+- `QUICKSTART.md`：快速启动。
+- `SETUP.md`：完整安装与环境配置，部分内容仍待进一步校准。
+- `backend/DEVELOPMENT.md`：后端开发说明。
+- `backend/DATA_IMPORT_GUIDE.md`：数据导入官方流程。
+- `backend/scripts/README.md`：数据脚本分层和使用规则。
+- `docs/README.md`：文档治理说明和历史归档索引。
 
-### 后端开发
-1. 编辑 `backend/` 中的任意文件
-2. **自动重启**（nodemon 监听）✅
-3. API 立即更新
+## 数据导入原则
 
-### 前端开发  
-1. 编辑 `frontend-aistudio/src/` 中的任意文件
-2. **自动刷新**（Vite HMR）✅
-3. 浏览器自动更新
+WCVP、IUCN、WDPA 等大型数据导入属于初始化或阶段性维护任务，不是日常开发任务。日常开发优先使用 `backend/package.json` 中暴露的 npm scripts，不直接运行未登记的一次性脚本。
 
----
+当前 WCVP 官方入口为：
 
-## 📚 文档导航
+```bash
+cd backend
+npm run import:wcvp
+```
 
-| 文档 | 内容 |
-|------|------|
-| [QUICKSTART.md](./QUICKSTART.md) | **新手入门**（5分钟快速启动） |
-| [SETUP.md](./SETUP.md) | 完整的安装配置步骤 |
-| [backend/DEVELOPMENT.md](./backend/DEVELOPMENT.md) | 后端开发指南 |
-| [backend/API_PLANTS.md](./backend/API_PLANTS.md) | 植物 API 文档 |
-| [backend/SEARCH_RECOMMENDATION_DESIGN.md](./backend/SEARCH_RECOMMENDATION_DESIGN.md) | 搜索与推荐模块设计 |
-| [TECHNICAL_SUMMARY.md](./TECHNICAL_SUMMARY.md) | 技术架构详解 |
-| [PROJECT_CHECKLIST.md](./PROJECT_CHECKLIST.md) | 项目开发清单 |
+更多数据流程见 `backend/DATA_IMPORT_GUIDE.md`。
 
----
+## 常用命令
 
-## 🎯 功能特性
+后端：
 
-### 🎨 前端特色
-- ✅ 响应式设计（桌面/平板/手机）
-- ✅ Element Plus 组件库
-- ✅ 动态图表（ECharts）
-- ✅ 3D 交互模型（Three.js）
-- ✅ 实时 HMR 开发体验
+```bash
+cd backend
+npm run dev
+npm test
+npm run db:ensure-indexes
+```
 
-### 🔧 后端特色
-- ✅ RESTful API 设计
-- ✅ 15+ 数据模型
-- ✅ 中间件权限控制
-- ✅ 错误处理和验证
-- ✅ 自动监听重启（nodemon）
+前端：
 
-### 📊 数据库特色
-- ✅ UTF-8MB4 完整支持（emoji、复杂字符等）
-- ✅ 标准化设计（3NF）
-- ✅ 关系完整性约束
-- ✅ 索引优化
+```bash
+cd frontend-aistudio
+npm run dev
+npm run build
+npm run lint
+```
 
----
+## 维护约定
 
-## ❓ 常见问题
-
-**Q: 如何修改数据库连接信息？**
-A: 编辑 `backend/.env` 文件中的 `DB_HOST`、`DB_USER`、`DB_PASS` 等
-
-**Q: 如何修改 API 端口？**
-A: 编辑 `backend/.env` 文件中的 `PORT`
-
-**Q: 如何修改前端端口？**
-A: 编辑 `frontend-aistudio/vite.config.ts` 中的 `server.port`
-
-**Q: 为什么后端文件修改后不生效？**
-A: 确保运行了 `npm run dev`（启用 nodemon 自动重启）
-
-详见 [QUICKSTART.md](./QUICKSTART.md) 的常见问题章节。
-
----
-
-## 📦 环境要求
-
-- **Node.js**：14.0 或更高
-- **npm**：6.0 或更高
-- **MySQL**：8.0 或更高
-- **操作系统**：Windows / Mac / Linux
-
----
-
-## 📝 许可证
-
-MIT License
-
----
-
-## 🤝 贡献指南
-
-欢迎提交 Issue 和 Pull Request！
-
----
-
-**快速开始**：立即查看 [QUICKSTART.md](./QUICKSTART.md) 👈
+- 根目录只保留启动、安装、数据库初始化和当前可信入口文档。
+- 阶段性总结、AI 生成报告、旧方案放入 `docs/archive/`。
+- 新增数据脚本必须在 `backend/scripts/README.md` 登记用途、入口、输入输出和是否可重复执行。
+- 优先通过 `backend/package.json` 的 npm scripts 暴露正式数据任务。

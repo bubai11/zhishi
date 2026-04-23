@@ -1,0 +1,2289 @@
+{
+  "info": {
+    "name": "知拾植物系统接口文档",
+    "description": "基于后端 Express 路由、控制器、校验器和现有 API 文档整理。所有请求使用 {{base_url}}，需要登录的接口预设 Authorization: Bearer {{token}}。先调用“用户模块/用户登录”获取 token 后，写入 Postman 环境变量 token。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3001",
+      "type": "string",
+      "description": "后端服务基础地址。"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT 登录令牌，不包含 Bearer 前缀。"
+    }
+  ],
+  "item": [
+    {
+      "name": "用户模块",
+      "description": "用户注册、登录、个人资料、统计和成就接口。",
+      "item": [
+        {
+          "name": "用户注册",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "创建新用户账号。username 需要唯一；password 会加密保存；email 为用户邮箱。",
+            "url": {
+              "raw": "{{base_url}}/api/user/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "register"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"test_user\",\n  \"password\": \"123456\",\n  \"email\": \"test@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "用户登录",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "用户登录，成功后返回 data.token。请把 token 写入 Postman 变量 token。",
+            "url": {
+              "raw": "{{base_url}}/api/user/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "login"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"test_user\",\n  \"password\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取个人资料",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前登录用户资料，需要 JWT。",
+            "url": {
+              "raw": "{{base_url}}/api/user/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "profile"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取个人统计",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前登录用户浏览、收藏、测验等统计，需要 JWT。",
+            "url": {
+              "raw": "{{base_url}}/api/user/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "stats"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取个人成就",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前登录用户成就列表，需要 JWT。",
+            "url": {
+              "raw": "{{base_url}}/api/user/achievements",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "user",
+                "achievements"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "植物模块",
+      "description": "植物列表、详情、统计、分析汇总、分布记录和数据维护接口。",
+      "item": [
+        {
+          "name": "获取植物列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "分页获取植物卡片列表，支持关键字、科、属和排序过滤。",
+            "url": {
+              "raw": "{{base_url}}/api/plants?page=1&limit=20&keyword=牡丹&sort=latest&family=Rosaceae&genus=Rosa",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": "页码，从 1 开始。"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                },
+                {
+                  "key": "keyword",
+                  "value": "牡丹",
+                  "disabled": false,
+                  "description": "搜索关键字，可匹配中文名、学名或名称字段。"
+                },
+                {
+                  "key": "sort",
+                  "value": "latest",
+                  "disabled": true,
+                  "description": "排序方式，常用值：relevance、latest、popular、alpha。"
+                },
+                {
+                  "key": "family",
+                  "value": "Rosaceae",
+                  "disabled": true,
+                  "description": "科科学名过滤。"
+                },
+                {
+                  "key": "genus",
+                  "value": "Rosa",
+                  "disabled": true,
+                  "description": "属科学名过滤。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取植物统计",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取植物总数、媒体资源数量、近 30 天活跃用户数等首页统计。",
+            "url": {
+              "raw": "{{base_url}}/api/plants/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants",
+                "stats"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取植物分析汇总",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取总物种数、热点区域数、受威胁物种数、保护地数量等可视化汇总。",
+            "url": {
+              "raw": "{{base_url}}/api/plants/analytics/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants",
+                "analytics",
+                "summary"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取植物详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按植物 ID 获取详情，包含分类链、图片、模型、生态指标、详情文本和保护状态。",
+            "url": {
+              "raw": "{{base_url}}/api/plants/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取植物分布记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按植物 ID 获取 WGSRPD 分布记录、国家代码、原生/引种状态和经纬度。",
+            "url": {
+              "raw": "{{base_url}}/api/plants/:id/distributions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants",
+                ":id",
+                "distributions"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取植物观察记录",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按植物 ID 获取观察记录。当前实现复用分布记录查询。",
+            "url": {
+              "raw": "{{base_url}}/api/plants/:id/observations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants",
+                ":id",
+                "observations"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建植物",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "创建植物基础信息，可同时写入详情字段。taxon_id、中文名、学名等按业务需要填写。",
+            "url": {
+              "raw": "{{base_url}}/api/plants",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taxon_id\": 5,\n  \"chinese_name\": \"向日葵\",\n  \"scientific_name\": \"Helianthus annuus\",\n  \"cover_image\": \"https://example.com/images/helianthus-annuus.jpg\",\n  \"short_desc\": \"常见观赏与油料植物。\",\n  \"intro\": \"植物介绍。\",\n  \"morphology\": \"形态特征。\",\n  \"lifecycle\": \"生命周期。\",\n  \"habitat\": \"生境信息。\",\n  \"distribution\": \"分布信息。\",\n  \"uses\": \"用途说明。\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "更新植物",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "按植物 ID 更新基础字段或详情字段，支持部分字段更新。",
+            "url": {
+              "raw": "{{base_url}}/api/plants/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants",
+                ":id"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chinese_name\": \"向日葵（更新）\",\n  \"short_desc\": \"更新后的简介。\",\n  \"intro\": \"更新后的介绍。\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除植物",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "按植物 ID 删除植物及其详情记录，请谨慎操作。",
+            "url": {
+              "raw": "{{base_url}}/api/plants/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "plants",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "分类模块",
+      "description": "分类列表、分类树、懒加载子节点、搜索、科属列表和分类维护接口。",
+      "item": [
+        {
+          "name": "获取分类列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取分类节点列表，可按级别、父级和关键字筛选。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa?rank=species&parent_id=4&keyword=Rosa",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa"
+              ],
+              "query": [
+                {
+                  "key": "rank",
+                  "value": "species",
+                  "disabled": false,
+                  "description": "分类级别：kingdom、phylum、subphylum、class、order、family、genus、species。"
+                },
+                {
+                  "key": "parent_id",
+                  "value": "4",
+                  "disabled": true,
+                  "description": "父级分类 ID。"
+                },
+                {
+                  "key": "keyword",
+                  "value": "Rosa",
+                  "disabled": true,
+                  "description": "搜索关键字，可匹配中文名、学名或名称字段。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取分类树",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "一次性获取完整分类树，节点包含 children。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa/tree",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa",
+                "tree"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取分类子节点",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "懒加载分类树子节点；parentId 为空时返回根节点。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa/tree/children?parentId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa",
+                "tree",
+                "children"
+              ],
+              "query": [
+                {
+                  "key": "parentId",
+                  "value": "1",
+                  "disabled": false,
+                  "description": "父级分类 ID；为空时返回根级节点。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "搜索分类节点",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "搜索分类节点，返回匹配节点、路径、是否有子节点等。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa/search?q=蔷薇&limit=12",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "蔷薇",
+                  "disabled": false,
+                  "description": "必填搜索关键字。"
+                },
+                {
+                  "key": "limit",
+                  "value": "12",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取科列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取有植物记录的科列表及物种数量。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa/families",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa",
+                "families"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取某科下代表属",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按科分类 ID 或科科学名获取代表属列表。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa/:id/genera?limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa",
+                ":id",
+                "genera"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取分类详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按分类 ID 获取详情，包含父节点、子节点和关联植物。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建分类",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "创建分类节点。taxon_rank、scientific_name、chinese_name 必填。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"taxon_rank\": \"species\",\n  \"parent_id\": 4,\n  \"scientific_name\": \"Helianthus annuus\",\n  \"chinese_name\": \"向日葵\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "更新分类",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "按分类 ID 更新节点，parent_id 不能指向自身。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa",
+                ":id"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chinese_name\": \"向日葵（更新）\",\n  \"description\": \"分类节点说明。\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除分类",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "删除分类。若仍有子分类或被植物引用，后端返回 400。",
+            "url": {
+              "raw": "{{base_url}}/api/taxa/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxa",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "分类统计模块",
+      "description": "增强版分类树和分类节点统计接口。",
+      "item": [
+        {
+          "name": "获取带统计的分类树",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取带统计信息的分类树节点，支持 parentId 懒加载。返回 success/data 结构。",
+            "url": {
+              "raw": "{{base_url}}/api/taxonomy/tree-with-stats?parentId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxonomy",
+                "tree-with-stats"
+              ],
+              "query": [
+                {
+                  "key": "parentId",
+                  "value": "1",
+                  "disabled": true,
+                  "description": "父级分类 ID；为空时返回根级节点。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取分类节点统计详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按分类 ID 获取统计详情，如关联物种数和下级节点统计。返回 success/data 结构。",
+            "url": {
+              "raw": "{{base_url}}/api/taxonomy/:id/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "taxonomy",
+                ":id",
+                "detail"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "搜索模块",
+      "description": "植物搜索结果和搜索建议接口。",
+      "item": [
+        {
+          "name": "搜索植物",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "植物搜索接口。q 必填；limit 为 1 到 50；sort 支持 relevance、popular、latest、alpha。",
+            "url": {
+              "raw": "{{base_url}}/api/search/plants?q=牡丹&page=1&limit=10&sort=relevance&taxonId=1&family=Rosaceae&genus=Rosa",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "search",
+                "plants"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "牡丹",
+                  "disabled": false,
+                  "description": "必填搜索关键字。"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": "页码，从 1 开始。"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                },
+                {
+                  "key": "sort",
+                  "value": "relevance",
+                  "disabled": false,
+                  "description": "排序方式，常用值：relevance、latest、popular、alpha。"
+                },
+                {
+                  "key": "taxonId",
+                  "value": "1",
+                  "disabled": true,
+                  "description": "分类 ID 过滤。"
+                },
+                {
+                  "key": "family",
+                  "value": "Rosaceae",
+                  "disabled": true,
+                  "description": "科科学名过滤。"
+                },
+                {
+                  "key": "genus",
+                  "value": "Rosa",
+                  "disabled": true,
+                  "description": "属科学名过滤。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取搜索建议",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "搜索框自动补全接口。q 必填，长度 1 到 30；limit 为 1 到 20。",
+            "url": {
+              "raw": "{{base_url}}/api/search/suggest?q=牡&limit=8",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "search",
+                "suggest"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "牡",
+                  "disabled": false,
+                  "description": "必填搜索关键字。"
+                },
+                {
+                  "key": "limit",
+                  "value": "8",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "收藏模块",
+      "description": "当前登录用户植物收藏接口，全部需要 JWT。",
+      "item": [
+        {
+          "name": "获取我的收藏",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前登录用户收藏列表。",
+            "url": {
+              "raw": "{{base_url}}/api/favorites",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "favorites"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "查询植物收藏状态",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "查询当前登录用户是否已收藏指定植物。",
+            "url": {
+              "raw": "{{base_url}}/api/favorites/status/:plantId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "favorites",
+                "status",
+                ":plantId"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "新增收藏",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "将指定 plant_id 加入当前用户收藏。",
+            "url": {
+              "raw": "{{base_url}}/api/favorites",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "favorites"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plant_id\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "取消收藏",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "取消当前用户对指定植物的收藏。",
+            "url": {
+              "raw": "{{base_url}}/api/favorites/:plantId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "favorites",
+                ":plantId"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "浏览记录模块",
+      "description": "当前登录用户浏览记录和周统计接口，全部需要 JWT。",
+      "item": [
+        {
+          "name": "获取我的浏览记录",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "分页获取当前登录用户浏览记录。",
+            "url": {
+              "raw": "{{base_url}}/api/browse-events?page=1&limit=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "browse-events"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": "页码，从 1 开始。"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取本周浏览统计",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前登录用户最近一周浏览统计。",
+            "url": {
+              "raw": "{{base_url}}/api/browse-events/weekly-stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "browse-events",
+                "weekly-stats"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建浏览记录",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "记录植物浏览行为。plant_id 必填；source 表示来源；duration 表示停留时长。",
+            "url": {
+              "raw": "{{base_url}}/api/browse-events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "browse-events"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plant_id\": 1,\n  \"source\": \"detail_page\",\n  \"duration\": 35\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除浏览记录",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "删除当前用户的一条浏览记录。",
+            "url": {
+              "raw": "{{base_url}}/api/browse-events/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "browse-events",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "测验模块",
+      "description": "植物知识测验、答题和答题历史接口。",
+      "item": [
+        {
+          "name": "获取测验列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取测验列表，包含基础信息和题目摘要。",
+            "url": {
+              "raw": "{{base_url}}/api/quizzes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "quizzes"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取我的全部答题历史",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前用户所有测验答题历史摘要。",
+            "url": {
+              "raw": "{{base_url}}/api/quizzes/attempts/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "quizzes",
+                "attempts",
+                "me"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取测验详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按测验 ID 获取完整题目和选项。",
+            "url": {
+              "raw": "{{base_url}}/api/quizzes/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "quizzes",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建测验",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "创建测验。title 必填；questions 中每题 stem 必填，options 为选项数组。",
+            "url": {
+              "raw": "{{base_url}}/api/quizzes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "quizzes"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"植物基础测验\",\n  \"scope\": \"basic\",\n  \"questions\": [\n    {\n      \"type\": \"single\",\n      \"stem\": \"向日葵常见花色是？\",\n      \"explanation\": \"向日葵舌状花通常为黄色。\",\n      \"options\": [\n        {\n          \"text\": \"黄色\",\n          \"is_correct\": true\n        },\n        {\n          \"text\": \"蓝色\",\n          \"is_correct\": false\n        }\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "提交测验答案",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "提交当前用户答案。answers 必须为非空数组，每项包含 question_id 和 chosen_option_id。",
+            "url": {
+              "raw": "{{base_url}}/api/quizzes/:id/attempts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "quizzes",
+                ":id",
+                "attempts"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    {\n      \"question_id\": 1,\n      \"chosen_option_id\": 2\n    },\n    {\n      \"question_id\": 2,\n      \"chosen_option_id\": 6\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取某测验我的答题记录",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前用户在指定测验下的答题记录。",
+            "url": {
+              "raw": "{{base_url}}/api/quizzes/:id/attempts/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "quizzes",
+                ":id",
+                "attempts",
+                "me"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "媒体资源模块",
+      "description": "图片、模型、视频及植物绑定关系维护接口。",
+      "item": [
+        {
+          "name": "获取媒体资源列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取媒体资源列表，可按 kind 或 plant_id 过滤。",
+            "url": {
+              "raw": "{{base_url}}/api/media-assets?kind=image&plant_id=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media-assets"
+              ],
+              "query": [
+                {
+                  "key": "kind",
+                  "value": "image",
+                  "disabled": false,
+                  "description": "媒体类型：image、model、video。"
+                },
+                {
+                  "key": "plant_id",
+                  "value": "1",
+                  "disabled": true,
+                  "description": "植物 ID。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取媒体资源详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按媒体 ID 获取详情和植物绑定关系。",
+            "url": {
+              "raw": "{{base_url}}/api/media-assets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media-assets",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "创建媒体资源",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "创建媒体资源。kind 和 url 必填；kind 只能为 image、model、video。",
+            "url": {
+              "raw": "{{base_url}}/api/media-assets",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media-assets"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kind\": \"image\",\n  \"storage_provider\": \"local\",\n  \"object_key\": \"plants/helianthus-annuus/cover.jpg\",\n  \"url\": \"/images/plants/helianthus-annuus/cover.jpg\",\n  \"width\": 1200,\n  \"height\": 800,\n  \"metadata\": {\n    \"source\": \"manual\",\n    \"license\": \"CC BY\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "更新媒体资源",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "按媒体 ID 更新 url、尺寸、metadata 等字段。",
+            "url": {
+              "raw": "{{base_url}}/api/media-assets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media-assets",
+                ":id"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"/images/plants/helianthus-annuus/detail.jpg\",\n  \"width\": 1600,\n  \"height\": 1000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "删除媒体资源",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "删除媒体资源并清理植物绑定关系。",
+            "url": {
+              "raw": "{{base_url}}/api/media-assets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media-assets",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "绑定媒体到植物",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "将媒体绑定到植物。plant_id 必填；sort_order 控制展示顺序；caption 为说明。",
+            "url": {
+              "raw": "{{base_url}}/api/media-assets/:id/bind",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media-assets",
+                ":id",
+                "bind"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plant_id\": 1,\n  \"sort_order\": 0,\n  \"caption\": \"植物封面图\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "解除媒体植物绑定",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "description": "解除指定媒体和指定植物之间的绑定。",
+            "url": {
+              "raw": "{{base_url}}/api/media-assets/:id/bind/:plantId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "media-assets",
+                ":id",
+                "bind",
+                ":plantId"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "红色名录模块",
+      "description": "IUCN 受威胁物种、预警列表和用户预警状态接口。",
+      "item": [
+        {
+          "name": "获取受威胁物种列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "分页获取受威胁物种，支持 IUCN 等级和关键字过滤。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/threatened-species?page=1&limit=20&category=EN&keyword=Rosa",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "threatened-species"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": "页码，从 1 开始。"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                },
+                {
+                  "key": "category",
+                  "value": "EN",
+                  "disabled": true,
+                  "description": "IUCN 等级，例如 CR、EN、VU、NT、LC。"
+                },
+                {
+                  "key": "keyword",
+                  "value": "Rosa",
+                  "disabled": true,
+                  "description": "搜索关键字，可匹配中文名、学名或名称字段。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取受威胁物种统计",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取总数、等级分布和种群趋势分布。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/threatened-species/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "threatened-species",
+                "stats"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取受威胁物种详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按受威胁物种记录 ID 获取详情，包含关联植物和分类。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/threatened-species/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "threatened-species",
+                ":id"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取公共预警列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取公共红色名录预警列表，不叠加用户状态。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/alerts?page=1&limit=20&unreadOnly=false&alertLevel=high&changeType=upgraded",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "alerts"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": "页码，从 1 开始。"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                },
+                {
+                  "key": "unreadOnly",
+                  "value": "false",
+                  "disabled": true,
+                  "description": "是否只返回未读记录，true/false。"
+                },
+                {
+                  "key": "alertLevel",
+                  "value": "high",
+                  "disabled": true,
+                  "description": "预警等级：high、medium、low。"
+                },
+                {
+                  "key": "changeType",
+                  "value": "upgraded",
+                  "disabled": true,
+                  "description": "变化类型：new_assessment、downgraded、upgraded、new_addition。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取我的预警列表",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前用户视角的预警列表，叠加已读和已忽略状态。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/alerts/me?page=1&limit=20&unreadOnly=false&includeDismissed=false&alertLevel=high&changeType=upgraded",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "alerts",
+                "me"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": "页码，从 1 开始。"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                },
+                {
+                  "key": "unreadOnly",
+                  "value": "false",
+                  "disabled": true,
+                  "description": "是否只返回未读记录，true/false。"
+                },
+                {
+                  "key": "includeDismissed",
+                  "value": "false",
+                  "disabled": true,
+                  "description": "是否包含已忽略预警，true/false。"
+                },
+                {
+                  "key": "alertLevel",
+                  "value": "high",
+                  "disabled": true,
+                  "description": "预警等级：high、medium、low。"
+                },
+                {
+                  "key": "changeType",
+                  "value": "upgraded",
+                  "disabled": true,
+                  "description": "变化类型：new_assessment、downgraded、upgraded、new_addition。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取我的未读预警数",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取当前用户未读且未忽略的预警数量。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/alerts/unread-count",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "alerts",
+                "unread-count"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "全部标记为已读",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "将所有预警对当前用户标记为已读。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/alerts/read-all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "alerts",
+                "read-all"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "标记单条预警已读",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "将指定预警标记为当前用户已读。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/alerts/:id/read",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "alerts",
+                ":id",
+                "read"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "忽略单条预警",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "忽略指定预警，同时标记为已读。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/alerts/:id/dismiss",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "alerts",
+                ":id",
+                "dismiss"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "恢复单条预警",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "恢复之前忽略的预警，并重置为未读。",
+            "url": {
+              "raw": "{{base_url}}/api/redlist/alerts/:id/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "redlist",
+                "alerts",
+                ":id",
+                "restore"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "保护地模块",
+      "description": "WDPA 保护地列表、详情和统计接口。",
+      "item": [
+        {
+          "name": "获取保护地列表",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "分页获取保护地，支持国家、类型、类别、状态、生态地理界和关键字过滤。",
+            "url": {
+              "raw": "{{base_url}}/api/protected-areas?page=1&limit=20&keyword=National Park&iso3=CHN&siteType=PA&iucnCategory=II&status=Designated&realm=Palearctic",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "protected-areas"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": "页码，从 1 开始。"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                },
+                {
+                  "key": "keyword",
+                  "value": "National Park",
+                  "disabled": true,
+                  "description": "搜索关键字，可匹配中文名、学名或名称字段。"
+                },
+                {
+                  "key": "iso3",
+                  "value": "CHN",
+                  "disabled": true,
+                  "description": "ISO3 国家代码，例如 CHN。"
+                },
+                {
+                  "key": "siteType",
+                  "value": "PA",
+                  "disabled": true,
+                  "description": "保护地站点类型。"
+                },
+                {
+                  "key": "iucnCategory",
+                  "value": "II",
+                  "disabled": true,
+                  "description": "IUCN 保护地类别。"
+                },
+                {
+                  "key": "status",
+                  "value": "Designated",
+                  "disabled": true,
+                  "description": "保护地状态。"
+                },
+                {
+                  "key": "realm",
+                  "value": "Palearctic",
+                  "disabled": true,
+                  "description": "生态地理界。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取保护地统计",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取保护地总数，以及按 IUCN 类别、站点类型、生态地理界分组统计。",
+            "url": {
+              "raw": "{{base_url}}/api/protected-areas/stats?iso3=CHN&siteType=PA&iucnCategory=II&status=Designated&realm=Palearctic",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "protected-areas",
+                "stats"
+              ],
+              "query": [
+                {
+                  "key": "iso3",
+                  "value": "CHN",
+                  "disabled": true,
+                  "description": "ISO3 国家代码，例如 CHN。"
+                },
+                {
+                  "key": "siteType",
+                  "value": "PA",
+                  "disabled": true,
+                  "description": "保护地站点类型。"
+                },
+                {
+                  "key": "iucnCategory",
+                  "value": "II",
+                  "disabled": true,
+                  "description": "IUCN 保护地类别。"
+                },
+                {
+                  "key": "status",
+                  "value": "Designated",
+                  "disabled": true,
+                  "description": "保护地状态。"
+                },
+                {
+                  "key": "realm",
+                  "value": "Palearctic",
+                  "disabled": true,
+                  "description": "生态地理界。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取保护地详情",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按 WDPA site_id 获取保护地详情，siteId 必须为正整数。",
+            "url": {
+              "raw": "{{base_url}}/api/protected-areas/:siteId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "protected-areas",
+                ":siteId"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "WCVP分析模块",
+      "description": "植物分布热力图、多样性、热点区域和区域保护摘要接口。",
+      "item": [
+        {
+          "name": "获取分布热力图数据",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取区域物种数量、原生/引种数量、高风险物种数量和保护地数量。",
+            "url": {
+              "raw": "{{base_url}}/api/wcvp-analytics/heatmap?limit=500",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wcvp-analytics",
+                "heatmap"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "500",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取多样性分布",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取物种多样性占比，支持 family、division、phylum 分组。",
+            "url": {
+              "raw": "{{base_url}}/api/wcvp-analytics/diversity?groupBy=family",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wcvp-analytics",
+                "diversity"
+              ],
+              "query": [
+                {
+                  "key": "groupBy",
+                  "value": "family",
+                  "disabled": false,
+                  "description": "分组方式：family、division、phylum。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取热点区域排行",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "获取物种记录数量最高的 WGSRPD Level 3 热点区域。",
+            "url": {
+              "raw": "{{base_url}}/api/wcvp-analytics/hotspots?limit=30",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wcvp-analytics",
+                "hotspots"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "30",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取区域保护摘要",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "description": "按 WGSRPD Level 3 区域代码获取物种、受威胁物种和保护地摘要。areaCode 必填。",
+            "url": {
+              "raw": "{{base_url}}/api/wcvp-analytics/region-protection-summary?areaCode=CHC",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "wcvp-analytics",
+                "region-protection-summary"
+              ],
+              "query": [
+                {
+                  "key": "areaCode",
+                  "value": "CHC",
+                  "disabled": false,
+                  "description": "WGSRPD Level 3 区域代码。"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "后台管理模块",
+      "description": "中文名翻译和人工维护接口，全部需要 JWT。",
+      "item": [
+        {
+          "name": "获取中文名翻译统计",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取中文名映射、翻译缓存、覆盖率等统计。",
+            "url": {
+              "raw": "{{base_url}}/api/admin/translation/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "translation",
+                "stats"
+              ],
+              "query": []
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "获取未匹配中文名植物",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              }
+            ],
+            "description": "获取缺少中文名或待补全的植物列表。",
+            "url": {
+              "raw": "{{base_url}}/api/admin/translation/unmatched?limit=100",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "translation",
+                "unmatched"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "100",
+                  "disabled": false,
+                  "description": "每页数量或返回数量。"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "手动更新植物中文名",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "description": "JWT 鉴权令牌。"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "description": "请求体为 JSON 格式。"
+              }
+            ],
+            "description": "人工更新植物中文名，并写入中文名缓存。plantId 和 chineseName 必填。",
+            "url": {
+              "raw": "{{base_url}}/api/admin/translation/update",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "translation",
+                "update"
+              ],
+              "query": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"plantId\": 1,\n  \"chineseName\": \"向日葵\",\n  \"source\": \"manual\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

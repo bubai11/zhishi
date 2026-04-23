@@ -11,4 +11,7 @@ router.get('/diversity', controller.diversity.bind(controller));
 // GET /api/wcvp-analytics/hotspots?limit=
 router.get('/hotspots', controller.hotspots.bind(controller));
 
+// GET /api/wcvp-analytics/region-protection-summary?areaCode=
+router.get('/region-protection-summary', controller.regionProtectionSummary.bind(controller));
+
 module.exports = router;

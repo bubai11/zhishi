@@ -4,6 +4,7 @@ const { sequelize } = require('./index');
 const PlantDetail = sequelize.define('PlantDetail', {
   plant_id: { type: DataTypes.INTEGER, primaryKey: true },
   intro: { type: DataTypes.TEXT },
+  ecology_importance: { type: DataTypes.TEXT },
   morphology: { type: DataTypes.TEXT },
   lifecycle: { type: DataTypes.TEXT },
   habitat: { type: DataTypes.TEXT },

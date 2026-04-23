@@ -44,7 +44,8 @@ export interface PlantDetailResponse {
     ecology_importance: string;
     distribution_text: string;
   };
-  observation_count: number;
+  distribution_count: number;
+  observation_count?: number;
   conservation_status?: string | null;
   iucn_category?: string | null;
   translation_source?: string | null;
@@ -69,6 +70,12 @@ export interface TaxonomyNode {
   children?: TaxonomyNode[];
 }
 
+export interface TaxonomySearchHit extends TaxonomyNode {
+  matched_name?: string;
+  match_source?: 'taxon' | 'plant';
+  path?: TaxonomyNode[];
+}
+
 export interface Genus {
   id: string;
   name: string;
@@ -81,21 +88,104 @@ export interface Genus {
 export interface AnalyticsSummary {
   total_species: number;
   critical_regions: number;
-  annual_growth_rate: string;
+  threatened_species?: number;
   protected_areas: number;
 }
 
 export interface DiversityItem {
   name: string;
   scientific_name?: string;
+  count?: number;
   percentage: number;
 }
 
 export interface RegionalData {
+  area_code_l3?: string;
   region: string;
+  region_zh?: string;
   density_label: string;
   species_count: number;
+  introduced_count?: number;
+  native_count?: number;
+  protected_area_count?: number;
+  high_risk_species_count?: number;
   trend: string;
+}
+
+export interface ProtectedAreaGroupCount {
+  iucn_category?: string | null;
+  site_type?: string | null;
+  realm?: string | null;
+  count: number;
+}
+
+export interface ProtectedArea {
+  site_id: number;
+  site_pid?: number | null;
+  source_type?: string | null;
+  site_type?: string | null;
+  name_eng?: string | null;
+  name_local?: string | null;
+  designation?: string | null;
+  designation_eng?: string | null;
+  designation_type?: string | null;
+  iucn_category?: string | null;
+  status?: string | null;
+  status_year?: number | null;
+  iso3?: string | null;
+  parent_iso3?: string | null;
+  realm?: string | null;
+  gis_area?: number | string | null;
+  rep_area?: number | string | null;
+  governance_type?: string | null;
+  management_authority?: string | null;
+  management_plan?: string | null;
+  conservation_objective?: string | null;
+  data_source?: string | null;
+}
+
+export interface ProtectedAreaStats {
+  total: number;
+  byCategory: ProtectedAreaGroupCount[];
+  byType: ProtectedAreaGroupCount[];
+  byRealm: ProtectedAreaGroupCount[];
+}
+
+export interface ProtectedAreaListResponse {
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
+  data: ProtectedArea[];
+}
+
+export interface RegionProtectionSummary {
+  area_code_l3: string;
+  region: string;
+  species_count: number;
+  country_codes: string[];
+  protected_area_count: number;
+  high_risk_species_count: number;
+  protection_prompt: string;
+  species_records: Array<{
+    id: number;
+    chinese_name?: string | null;
+    scientific_name?: string | null;
+    family?: string | null;
+    genus?: string | null;
+    occurrence_status?: string | null;
+  }>;
+  high_risk_species: Array<{
+    id: number;
+    plant_id?: number | null;
+    chinese_name?: string | null;
+    scientific_name?: string | null;
+    red_list_category?: string | null;
+    population_trend?: string | null;
+    conservation_actions?: string | null;
+  }>;
+  protected_areas: ProtectedArea[];
+  protected_area_categories: Array<{ iucn_category: string; count: number }>;
 }
 
 export interface Alert {

@@ -1,0 +1,117 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="data-engineering-pipeline" name="图4.2_数据工程管道流程图">
+    <mxGraphModel dx="1420" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1420" pageHeight="760" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="source-boundary" value="多源数据输入" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=8 4;strokeWidth=1.3;fontSize=16;fontStyle=1;fontFamily=SimSun;verticalAlign=top;spacingTop=12" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="230" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="pipeline-boundary" value="离线数据工程管道（脚本级处理流程）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=8 4;strokeWidth=1.3;fontSize=16;fontStyle=1;fontFamily=SimSun;verticalAlign=top;spacingTop=12" vertex="1" parent="1">
+          <mxGeometry x="320" y="80" width="610" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="storage-boundary" value="数据存储与系统支撑" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;dashed=1;dashPattern=8 4;strokeWidth=1.3;fontSize=16;fontStyle=1;fontFamily=SimSun;verticalAlign=top;spacingTop=12" vertex="1" parent="1">
+          <mxGeometry x="980" y="80" width="360" height="520" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-wcvp" value="WCVP&#xa;世界维管植物名录" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="70" y="140" width="170" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="src-iucn" value="IUCN&#xa;濒危等级数据" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="70" y="220" width="170" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="src-wdpa" value="WDPA&#xa;保护地数据" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="70" y="300" width="170" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="src-wgsrpd" value="WGSRPD&#xa;植物地理区划" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="70" y="380" width="170" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="src-iplant" value="iPlant&#xa;中文名与图文补充" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="70" y="460" width="170" height="54" as="geometry" />
+        </mxCell>
+
+        <mxCell id="raw-stage" value="原始数据暂存&#xa;CSV / Excel / JSON / 图片链接 / 边界数据" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="365" y="135" width="220" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="clean-stage" value="数据清洗与标准化&#xa;字段统一、缺失值处理、重复记录处理、名称规范化" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="660" y="135" width="220" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="merge-stage" value="数据融合与关联&#xa;分类信息、保护等级、分布区域、保护地信息" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="365" y="265" width="220" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="enrich-stage" value="补全与修复&#xa;中文名、图片、描述信息、异常数据修复" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="660" y="265" width="220" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="mapping-stage" value="区域映射处理&#xa;WGSRPD 区域编码 ↔ ISO3 国家代码" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="365" y="395" width="220" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="import-stage" value="批量导入脚本&#xa;Sequelize / MySQL 导入与校验" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="660" y="395" width="220" height="62" as="geometry" />
+        </mxCell>
+
+        <mxCell id="db-node" value="MySQL 知识库&#xa;物种表 / 分类表 / 分布表&#xa;保护地表 / 预警表 / 区域映射表" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="1030" y="155" width="250" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="service-node" value="后端服务读取&#xa;植物服务 / 分类服务 / 分析服务&#xa;搜索服务 / 预警服务 / 区域服务" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="1030" y="315" width="250" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend-node" value="支撑前台功能&#xa;植物知识库 / 分类树 / 可视化分析&#xa;区域摘要 / 濒危预警" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="1030" y="475" width="250" height="88" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note-offline" value="说明：该流程对应离线采集、脚本处理、数据标准化与批量导入过程。" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontFamily=SimSun" vertex="1" parent="1">
+          <mxGeometry x="350" y="635" width="720" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge-source-raw" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="src-wdpa" target="raw-stage">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="327" />
+              <mxPoint x="290" y="166" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-raw-clean" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="raw-stage" target="clean-stage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-clean-merge" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="clean-stage" target="merge-stage">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="230" />
+              <mxPoint x="475" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-merge-enrich" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="merge-stage" target="enrich-stage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-enrich-mapping" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="enrich-stage" target="mapping-stage">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="360" />
+              <mxPoint x="475" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-mapping-import" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="mapping-stage" target="import-stage">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-import-db" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="import-stage" target="db-node">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="955" y="426" />
+              <mxPoint x="955" y="199" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-db-service" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="db-node" target="service-node">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-service-frontend" style="endArrow=block;endFill=1;html=1;rounded=0;strokeColor=#000000;strokeWidth=1.2;edgeStyle=orthogonalEdgeStyle" edge="1" parent="1" source="service-node" target="frontend-node">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

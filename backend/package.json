@@ -27,6 +27,8 @@
     "build:wgsrpd:level3": "node scripts/build-wgsrpd-level3-csv.js",
     "import:iucn": "node scripts/import-iucn-redlist.js",
     "import:wdpa": "node scripts/import-wdpa.js",
+    "data:import": "node scripts/import-maintenance-data.js",
+    "data:import:wgsrpd-map": "node scripts/import-wgsrpd-region-country-map.js",
     "wcvp:sync:plants-fields": "node scripts/sync-plants-from-wcvp-names.js",
     "taxonomy:repair-chain": "node scripts/repair-taxonomy-chain.js",
     "taxonomy:migrate-subphylum": "node scripts/migrate-taxonomy-subphylum.js",

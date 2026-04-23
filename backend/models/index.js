@@ -29,6 +29,7 @@ const RedlistAlerts = require('./redlist_alerts');
 const RedlistAlertUserState = require('./redlist_alert_user_state');
 const PlantDistributions = require('./plant_distributions');
 const WgsrpdRegions = require('./wgsrpd_regions');
+const WgsrpdRegionCountryMap = require('./wgsrpd_region_country_map');
 const PlantEcology = require('./plant_ecology');
 const ProtectedAreas = require('./protected_areas');
 const PlantExternalSources = require('./plant_external_sources');
@@ -58,6 +59,7 @@ Object.assign(module.exports, {
   RedlistAlertUserState,
   PlantDistributions,
   WgsrpdRegions,
+  WgsrpdRegionCountryMap,
   PlantEcology,
   ProtectedAreas,
   PlantExternalSources,

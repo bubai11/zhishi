@@ -1,0 +1,69 @@
+flowchart TB
+    %% 图4.1 系统总体架构图
+
+    subgraph FE["前端交互层（React + TypeScript + Vite）"]
+        Home["首页与系统导览"]
+        Library["植物库与搜索筛选"]
+        Detail["植物详情展示"]
+        Classify["植物分类认知"]
+        Analysis["可视化分析页面"]
+        Learning["学习中心"]
+        Profile["个人中心"]
+    end
+
+    subgraph API["后端服务层（Node.js + Express）"]
+        Router["RESTful API 路由"]
+        PlantService["植物数据服务"]
+        TaxonomyService["分类查询服务"]
+        AnalysisService["可视化分析服务"]
+        BehaviorService["用户行为记录服务"]
+        QuizService["测验推荐与提交服务"]
+        AuthService["用户认证服务"]
+    end
+
+    subgraph ORM["数据访问层（Sequelize ORM）"]
+        Models["模型映射与关联关系"]
+        Query["查询封装与统计计算"]
+    end
+
+    subgraph DB["数据支撑层（MySQL 植物知识数据库）"]
+        Plants["植物信息表\nplants / plant_details"]
+        Categories["分类与标签表\ncategories / tags"]
+        Images["植物图片表\nplant_images / media_assets"]
+        Distribution["分布与保护数据表"]
+        QuizTables["题库与答题记录表\nquiz_questions / quiz_records"]
+        BehaviorTables["用户行为表\nfavorites / browse_events / user_behavior_logs"]
+    end
+
+    subgraph DATA["多源数据与系统支撑层"]
+        Crawler["网络采集数据"]
+        OpenData["开放植物数据\nWCVP / IUCN / WDPA / WGSRPD"]
+        Manual["人工整理与校核数据"]
+        Scripts["数据清洗、导入与维护脚本"]
+    end
+
+    FE -->|HTTP 请求 / JSON 响应| API
+    API --> ORM
+    ORM --> DB
+    DATA --> Scripts
+    Scripts --> DB
+
+    Home --> Library
+    Library --> Detail
+    Detail --> Learning
+    Classify --> Detail
+    Analysis --> Detail
+
+    Router --> PlantService
+    Router --> TaxonomyService
+    Router --> AnalysisService
+    Router --> BehaviorService
+    Router --> QuizService
+    Router --> AuthService
+
+    PlantService --> Models
+    TaxonomyService --> Models
+    AnalysisService --> Query
+    BehaviorService --> Models
+    QuizService --> Models
+    AuthService --> Models

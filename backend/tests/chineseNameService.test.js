@@ -90,4 +90,5 @@ test('extractIPlantProfileFromHtml keeps accepted-name candidate links', () => {
   );
 
   assert.deepEqual(profile.linkedScientificNames, ['Yulania denudata']);
+  assert.deepEqual(profile.payload.linkedScientificNames, ['Yulania denudata']);
 });

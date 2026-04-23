@@ -21,6 +21,10 @@ let intervalMs = 500;
 let resume = true;
 let prioritize = true;
 let retryMissing = false;
+let highYieldOnly = false;
+let minGenusSuccessRate = 20;
+let minGenusSamples = 4;
+let minGenusSuccesses = 2;
 
 for (const arg of args) {
   if (arg.startsWith('--batch=')) batchSize = Number(arg.split('=')[1]) || batchSize;
@@ -29,12 +33,18 @@ for (const arg of args) {
   if (arg === '--no-resume') resume = false;
   if (arg === '--no-priority') prioritize = false;
   if (arg === '--retry-missing') retryMissing = true;
+  if (arg === '--high-yield-only') highYieldOnly = true;
+  if (arg === '--no-high-yield-only') highYieldOnly = false;
+  if (arg.startsWith('--min-genus-success-rate=')) minGenusSuccessRate = Number(arg.split('=')[1]) || minGenusSuccessRate;
+  if (arg.startsWith('--min-genus-samples=')) minGenusSamples = Number(arg.split('=')[1]) || minGenusSamples;
+  if (arg.startsWith('--min-genus-successes=')) minGenusSuccesses = Number(arg.split('=')[1]) || minGenusSuccesses;
 }
 
 process.env.CN_FETCH_INTERVAL_MS = String(intervalMs);
 
 const LOG_DIR = path.join(__dirname, '..', 'logs');
 const CHECKPOINT_FILE = path.join(LOG_DIR, 'iplant-enrich-checkpoint.json');
+const PROCESSED_FILE = path.join(LOG_DIR, 'fill-detail-processed.json');
 const ERROR_LOG = path.join(LOG_DIR, 'iplant-enrich-errors.log');
 
 const HIGH_VALUE_EPITHETS = [
@@ -118,6 +128,28 @@ function saveCheckpoint(payload) {
   fs.writeFileSync(CHECKPOINT_FILE, JSON.stringify(payload, null, 2), 'utf8');
 }
 
+function loadProcessedPlantIds() {
+  if (!resume || !fs.existsSync(PROCESSED_FILE)) {
+    return new Set();
+  }
+
+  try {
+    const parsed = JSON.parse(fs.readFileSync(PROCESSED_FILE, 'utf8'));
+    return new Set(Array.isArray(parsed) ? parsed.map(Number).filter(Boolean) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveProcessedPlantIds(processedPlantIds) {
+  ensureLogDir();
+  fs.writeFileSync(
+    PROCESSED_FILE,
+    JSON.stringify([...processedPlantIds].sort((a, b) => a - b)),
+    'utf8'
+  );
+}
+
 function clearCheckpoint() {
   if (fs.existsSync(CHECKPOINT_FILE)) {
     fs.unlinkSync(CHECKPOINT_FILE);
@@ -159,6 +191,7 @@ function appendReport(lines) {
 async function getPendingPlants(conn, lastPlantId, limit) {
   const priorityEnabled = prioritize ? 1 : 0;
   const retryMissingEnabled = retryMissing ? 1 : 0;
+  const highYieldOnlyEnabled = highYieldOnly ? 1 : 0;
   const highYieldList = HIGH_YIELD_GENERA.map((item) => `'${item}'`).join(', ');
   const lowYieldList = LOW_YIELD_GENERA.map((item) => `'${item}'`).join(', ');
   const epithetScoreExpr = HIGH_VALUE_EPITHETS.map((epithet) => `WHEN LOWER(p.scientific_name) LIKE '% ${epithet}' THEN 30`).join(' ');
@@ -218,10 +251,27 @@ async function getPendingPlants(conn, lastPlantId, limit) {
           s.id IS NULL
           OR (? = 1 AND s.fetch_status = 'missing')
         )
+        AND (
+          ? = 0
+          OR (
+            COALESCE(gs.success_count, 0) >= ?
+            AND (COALESCE(gs.success_count, 0) + COALESCE(gs.missing_count, 0)) >= ?
+            AND (100 * COALESCE(gs.success_count, 0) / NULLIF(COALESCE(gs.success_count, 0) + COALESCE(gs.missing_count, 0), 0)) >= ?
+          )
+        )
       ORDER BY priority_score DESC, p.id ASC
       LIMIT ?
     `,
-    [priorityEnabled, lastPlantId, retryMissingEnabled, limit]
+    [
+      priorityEnabled,
+      lastPlantId,
+      retryMissingEnabled,
+      highYieldOnlyEnabled,
+      minGenusSuccesses,
+      minGenusSamples,
+      minGenusSuccessRate,
+      limit
+    ]
   );
 
   return rows;
@@ -270,6 +320,7 @@ async function upsertPlantDetail(conn, plantId, profile) {
     iplant: {
       aliases: profile.aliases,
       synonyms: profile.synonyms,
+      linkedScientificNames: profile.linkedScientificNames,
       mediaCandidates: profile.mediaCandidates,
       externalId: profile.externalId,
       sourceUrl: profile.sourceUrl
@@ -402,6 +453,7 @@ async function main() {
   ensureLogDir();
   const conn = await mysql.createConnection(dbConfig);
   const checkpoint = loadCheckpoint();
+  const processedPlantIds = loadProcessedPlantIds();
   let cursor = Number(checkpoint.lastPlantId || 0);
   let success = 0;
   let missing = 0;
@@ -414,7 +466,11 @@ async function main() {
   try {
     console.log(`iPlant enrichment target DB: ${dbConfig.database}`);
     for (let round = 1; round <= maxRounds; round += 1) {
-      const plants = await getPendingPlants(conn, cursor, batchSize);
+      const candidateLimit = Math.max(batchSize * 5, 500);
+      const candidates = await getPendingPlants(conn, prioritize ? 0 : cursor, candidateLimit);
+      const plants = candidates
+        .filter((plant) => !processedPlantIds.has(Number(plant.id)))
+        .slice(0, batchSize);
       if (!plants.length) {
         completedAll = true;
         break;
@@ -451,10 +507,16 @@ async function main() {
           logError(plant.scientific_name, error.message);
         }
 
+        processedPlantIds.add(Number(plant.id));
+        saveProcessedPlantIds(processedPlantIds);
         saveCheckpoint({
           lastPlantId: cursor,
           updatedAt: new Date().toISOString()
         });
+
+        if (intervalMs > 0) {
+          await new Promise((resolve) => setTimeout(resolve, intervalMs));
+        }
       }
 
       if (plants.length < batchSize) {

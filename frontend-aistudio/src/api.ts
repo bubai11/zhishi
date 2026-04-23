@@ -12,12 +12,17 @@ import type {
   PlantDetailResponse,
   PlantListResponse,
   PlantStats,
+  ProtectedArea,
+  ProtectedAreaListResponse,
+  ProtectedAreaStats,
   Quiz,
   QuizAttempt,
   QuizResult,
   QuizSubmitPayload,
   RegionalData,
+  RegionProtectionSummary,
   TaxaFamily,
+  TaxonomySearchHit,
   TaxonomyNode,
   UserProfile,
   UserStats,
@@ -174,6 +179,21 @@ export function getPlants(params: Record<string, string | number | undefined>) {
   return request<PlantListResponse>(`${pathname}?${search.toString()}`, undefined, { cacheTtlMs: 15 * 1000 });
 }
 
+export function getSearchSuggestions(keyword: string, limit = 8) {
+  const q = String(keyword || '').trim();
+  if (!q) {
+    return Promise.resolve({ suggestions: [] as Array<{ plant_id: string; text: string; type: 'chinese_name' | 'scientific_name' }> });
+  }
+
+  const search = new URLSearchParams();
+  search.set('q', q);
+  search.set('limit', String(limit));
+
+  return request<{ suggestions: Array<{ plant_id: string; text: string; type: 'chinese_name' | 'scientific_name' }> }>(`/search/suggest?${search.toString()}`, undefined, {
+    cacheTtlMs: 10 * 1000
+  });
+}
+
 export function getPlantStats() {
   return request<PlantStats>('/plants/stats', undefined, { cacheTtlMs: 60 * 1000 });
 }
@@ -200,6 +220,13 @@ export function getTaxonomyChildren(parentId?: string) {
   return request<TaxonomyNode[]>(`/taxa/tree/children${query ? `?${query}` : ''}`, undefined, { cacheTtlMs: 5 * 60 * 1000 });
 }
 
+export function searchTaxonomyNodes(keyword: string, limit = 12) {
+  const search = new URLSearchParams();
+  search.set('q', keyword);
+  search.set('limit', String(limit));
+  return request<{ total: number; list: TaxonomySearchHit[] }>(`/taxa/search?${search.toString()}`, undefined, { cacheTtlMs: 60 * 1000 });
+}
+
 export function getGenera(taxaId: string) {
   return request<{ list: Genus[]; total: number }>(`/taxa/${taxaId}/genera`, undefined, { cacheTtlMs: 5 * 60 * 1000 });
 }
@@ -220,8 +247,44 @@ export function getDiversity(groupBy = 'division') {
   return request<DiversityItem[]>(`/wcvp-analytics/diversity?groupBy=${groupBy}`);
 }
 
-export function getHeatmap() {
-  return request<RegionalData[]>('/wcvp-analytics/heatmap');
+export function getHeatmap(params?: { limit?: number }) {
+  const qs = params?.limit ? `?limit=${params.limit}` : '';
+  return request<RegionalData[]>(`/wcvp-analytics/heatmap${qs}`);
+}
+
+export function getProtectedAreaStats(params?: { iso3?: string; siteType?: string; iucnCategory?: string; status?: string; realm?: string }) {
+  const search = new URLSearchParams();
+  if (params?.iso3) search.set('iso3', params.iso3);
+  if (params?.siteType) search.set('siteType', params.siteType);
+  if (params?.iucnCategory) search.set('iucnCategory', params.iucnCategory);
+  if (params?.status) search.set('status', params.status);
+  if (params?.realm) search.set('realm', params.realm);
+  const query = search.toString();
+  return request<ProtectedAreaStats>(`/protected-areas/stats${query ? `?${query}` : ''}`, undefined, { cacheTtlMs: 60 * 1000 });
+}
+
+export function getProtectedAreas(params?: { page?: number; limit?: number; iso3?: string; siteType?: string; iucnCategory?: string; status?: string; realm?: string; keyword?: string }) {
+  const search = new URLSearchParams();
+  if (params?.page) search.set('page', String(params.page));
+  if (params?.limit) search.set('limit', String(params.limit));
+  if (params?.iso3) search.set('iso3', params.iso3);
+  if (params?.siteType) search.set('siteType', params.siteType);
+  if (params?.iucnCategory) search.set('iucnCategory', params.iucnCategory);
+  if (params?.status) search.set('status', params.status);
+  if (params?.realm) search.set('realm', params.realm);
+  if (params?.keyword) search.set('keyword', params.keyword);
+  const query = search.toString();
+  return request<ProtectedAreaListResponse>(`/protected-areas${query ? `?${query}` : ''}`, undefined, { cacheTtlMs: 60 * 1000 });
+}
+
+export function getProtectedAreaDetail(siteId: number) {
+  return request<ProtectedArea>(`/protected-areas/${siteId}`, undefined, { cacheTtlMs: 60 * 1000 });
+}
+
+export function getRegionProtectionSummary(areaCode: string) {
+  const search = new URLSearchParams();
+  search.set('areaCode', areaCode);
+  return request<RegionProtectionSummary>(`/wcvp-analytics/region-protection-summary?${search.toString()}`, undefined, { cacheTtlMs: 60 * 1000 });
 }
 
 export async function getAlerts() {
